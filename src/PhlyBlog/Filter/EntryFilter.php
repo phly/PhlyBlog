@@ -10,7 +10,7 @@ class EntryFilter extends InputFilter
     {
         $filterRules = array(
             'id'         => 'string_trim',
-            'title'      => array('string_trim', 'strip_tags', 'html_entities'),
+            'title'      => array('string_trim', 'strip_tags'),
             'body'       => 'string_trim',
             'extended'   => 'string_trim',
             'author'     => 'string_trim',

@@ -9,7 +9,7 @@ class AuthorFilter extends InputFilter
     {
         $filterRules = array(
             'id'    => 'string_trim',
-            'name'  => array('string_trim', 'strip_tags', 'html_entities'),
+            'name'  => array('string_trim', 'strip_tags'),
             'email' => 'string_trim',
             'url'   => 'string_trim',
         );

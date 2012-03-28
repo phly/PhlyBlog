@@ -198,7 +198,7 @@ class EntryEntityTest extends TestCase
                     ->setBody('  Foo Bar. ')
                     ->setAuthor(' matthew ');
         $this->assertTrue($this->entry->isValid());
-        $this->assertEquals('foo &amp; bar', $this->entry->getTitle());
+        $this->assertEquals('foo & bar', $this->entry->getTitle());
         $this->assertFalse($this->entry->isDraft());
         $this->assertFalse($this->entry->isPublic());
         $this->assertEquals('Foo Bar.', $this->entry->getBody());
