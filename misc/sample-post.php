@@ -1,11 +1,19 @@
 <?php
+use PhlyBlog\AuthorEntity;
 use PhlyBlog\EntryEntity;
 
-$entry = new EntryEntity();
+$entry  = new EntryEntity();
+$author = new AuthorEntity();
+$author->fromArray(array(
+    'id'    => 'yourusername',
+    'name'  => 'Your Full Name',
+    'email' => 'you@your.tld',
+    'url'   => 'http://your.tld/',
+));
 
 $entry->setId('this-is-the-stub-used-in-the-uri-and-should-be-unique');
 $entry->setTitle('New site!');
-$entry->setAuthor('matthew');
+$entry->setAuthor($author);
 $entry->setDraft(false);
 $entry->setPublic(true);
 $entry->setCreated(1300744335);

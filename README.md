@@ -118,6 +118,9 @@ You will want to setup local configuration; I recommend putting it in
             'entries_template'           => 'phly-blog/list',
             'entry_template'             => 'phly-blog/entry',
 
+            // The feed author information is default information to use when
+            // the author of a post is unknown, or is not an AuthorEntity
+            // object (and hence does not contain this information).
             'feed_author_email'          => 'you@your.tld',
             'feed_author_name'           => "Your Name Here",
             'feed_author_uri'            => 'http://your.tld',

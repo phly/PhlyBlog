@@ -333,6 +333,11 @@ class Compiler
                 continue;
             }
 
+            if (!$entry->isValid()) {
+                // if we have an invalid entry, we should not continue
+                continue;
+            }
+
             if ($entry->isDraft()) {
                 continue;
             }
@@ -383,6 +388,9 @@ class Compiler
 
             // Finally, by author
             $author = $entry->getAuthor();
+            if ($author instanceof AuthorEntity) {
+                $author = $author->getId();
+            }
             if (!isset($this->byAuthor[$author])) {
                 $this->byAuthor[$author] = new Compiler\SortedEntries();
             }
@@ -529,7 +537,7 @@ class Compiler
         if (empty($authorUri)) {
             $authorUri = $blogLink;
         }
-        $author      = array(
+        $defaultAuthor = array(
             'name'  => $this->options->getFeedAuthorName(),
             'email' => $this->options->getFeedAuthorEmail(),
             'uri'   => $authorUri,
@@ -540,11 +548,22 @@ class Compiler
             if (!$latest) {
                 $latest = $post;
             }
+
+            $authorDetails = $defaultAuthor;
+            $author        = $post->getAuthor();
+            if ($author instanceof AuthorEntity && $author->isValid()) {
+                $authorDetails = array(
+                    'name'  => $author->getName(),
+                    'email' => $author->getEmail(),
+                    'uri'   => $author->getUri(),
+                );
+            }
+
             $entry = $feed->createEntry();
             $entry->setTitle($post->getTitle());
             $entry->setLink(sprintf($linkTemplate, $post->getId()));
 
-            $entry->addAuthor($author);
+            $entry->addAuthor($authorDetails);
             $entry->setDateModified($post->getUpdated());
             $entry->setDateCreated($post->getCreated());
             $entry->setContent($post->getBody());
