@@ -47,7 +47,12 @@ class EntryFilter extends InputFilter
         );
 
         $options = array(
-            'escapeFilter' => 'string_trim',
+            'escapeFilter' => array('callback', function($value) {
+                if (!is_scalar($value)) {
+                    return $value;
+                }
+                return trim($value);
+            }),
         );
 
         parent::__construct($filterRules, $validatorRules, null, $options);
