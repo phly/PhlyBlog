@@ -555,7 +555,7 @@ class Compiler
                 $authorDetails = array(
                     'name'  => $author->getName(),
                     'email' => $author->getEmail(),
-                    'uri'   => $author->getUri(),
+                    'uri'   => $author->getUrl(),
                 );
             }
 
