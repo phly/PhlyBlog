@@ -320,13 +320,13 @@ class Compiler
             return;
         }
 
-        $this->entries      = new Compiler\SortedEntries();
-        $this->pagedEntries = new Compiler\SortedEntries();
-        $this->byYear       = array();
-        $this->byMonth      = array();
-        $this->byDay        = array();
-        $this->byTag        = array();
-        $this->byAuthor     = array();
+        $entries      = new Compiler\SortedEntries();
+        $pagedEntries = new Compiler\SortedEntries();
+        $byYear       = array();
+        $byMonth      = array();
+        $byDay        = array();
+        $byTag        = array();
+        $byAuthor     = array();
         foreach ($this->files as $file) {
             $entry = include $file->getRealPath();
             if (!$entry instanceof EntryEntity) {
@@ -344,7 +344,7 @@ class Compiler
 
             // First, set in entries
             $timestamp = $entry->getCreated();
-            $this->entries->insert($entry, $timestamp);
+            $entries->insert($entry, $timestamp);
 
             // Second, test if it's public; if not, continue to the next
             if (!$entry->isPublic()) {
@@ -352,7 +352,7 @@ class Compiler
             }
 
             // Third, add to a special "paginated entries" list
-            $this->pagedEntries->insert($entry, $timestamp);
+            $pagedEntries->insert($entry, $timestamp);
 
             // Then, set in appropriate year, month, and day slots
             $date      = new DateTime();
@@ -363,27 +363,27 @@ class Compiler
             $month = $date->format('Y/m');
             $day   = $date->format('Y/m/d');
 
-            if (!isset($this->byYear[$year])) {
-                $this->byYear[$year] = new Compiler\SortedEntries();
+            if (!isset($byYear[$year])) {
+                $byYear[$year] = new Compiler\SortedEntries();
             }
-            $this->byYear[$year]->insert($entry, $timestamp);
+            $byYear[$year]->insert($entry, $timestamp);
 
-            if (!isset($this->byMonth[$month])) {
-                $this->byMonth[$month] = new Compiler\SortedEntries();
+            if (!isset($byMonth[$month])) {
+                $byMonth[$month] = new Compiler\SortedEntries();
             }
-            $this->byMonth[$month]->insert($entry, $timestamp);
+            $byMonth[$month]->insert($entry, $timestamp);
 
-            if (!isset($this->byDay[$day])) {
-                $this->byDay[$day] = new Compiler\SortedEntries();
+            if (!isset($byDay[$day])) {
+                $byDay[$day] = new Compiler\SortedEntries();
             }
-            $this->byDay[$day]->insert($entry, $timestamp);
+            $byDay[$day]->insert($entry, $timestamp);
 
             // Next, set in appropriate tag lists
             foreach ($entry->getTags() as $tag) {
-                if (!isset($this->byTag[$tag])) {
-                    $this->byTag[$tag] = new Compiler\SortedEntries();
+                if (!isset($byTag[$tag])) {
+                    $byTag[$tag] = new Compiler\SortedEntries();
                 }
-                $this->byTag[$tag]->insert($entry, $timestamp);
+                $byTag[$tag]->insert($entry, $timestamp);
             }
 
             // Finally, by author
@@ -391,24 +391,42 @@ class Compiler
             if ($author instanceof AuthorEntity) {
                 $author = $author->getId();
             }
-            if (!isset($this->byAuthor[$author])) {
-                $this->byAuthor[$author] = new Compiler\SortedEntries();
+            if (!isset($byAuthor[$author])) {
+                $byAuthor[$author] = new Compiler\SortedEntries();
             }
-            $this->byAuthor[$author]->insert($entry, $timestamp);
+            $byAuthor[$author]->insert($entry, $timestamp);
         }
 
         // Cast to array to ensure we can loop through it multiple
         // times; fixes the issue that a Heap removes entries during iteration
-        $this->entries      = iterator_to_array($this->entries);
-        $this->pagedEntries = iterator_to_array($this->pagedEntries);
+        $this->entries      = iterator_to_array($entries);
+        $this->pagedEntries = iterator_to_array($pagedEntries);
 
-        foreach (array('byYear', 'byMonth', 'byDay', 'byTag', 'byAuthor') as $prop) {
-            foreach ($this->$prop as $index => $heap) {
-                // have to do this due to dynamic resolution order in PHP
-                $local =& $this->$prop;
-                $local[$index] = iterator_to_array($heap);
-            }
+        // Have to do each property singly, due to issues with dynamic resolution
+        foreach ($byYear as $year => $heap) {
+            $byYear[$year] = iterator_to_array($heap);
         }
+        $this->byYear = $byYear;
+
+        foreach ($byMonth as $month => $heap) {
+            $byMonth[$month] = iterator_to_array($heap);
+        }
+        $this->byMonth = $byMonth;
+
+        foreach ($byDay as $day => $heap) {
+            $byDay[$day] = iterator_to_array($heap);
+        }
+        $this->byDay = $byDay;
+
+        foreach ($byTag as $tag => $heap) {
+            $byTag[$tag] = iterator_to_array($heap);
+        }
+        $this->byTag = $byTag;
+
+        foreach ($byAuthor as $author => $heap) {
+            $byAuthor[$author] = iterator_to_array($heap);
+        }
+        $this->byAuthor = $byAuthor;
     }
 
     /**
@@ -521,7 +539,7 @@ class Compiler
         $linkTemplate     = $this->options->getFeedHostname() . $this->options->getEntryLinkTemplate();
 
         // Get a paginator
-        $paginator = $this->getPaginator($this->pagedEntries);
+        $paginator = $this->getPaginator($list);
         $paginator->setCurrentPageNumber(1);
 
         $feed = new FeedWriter();
