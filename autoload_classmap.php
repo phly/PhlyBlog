@@ -3,6 +3,7 @@
 return array(
     'PhlyBlog\Filter\EntryFilter'       => __DIR__ . '/src/PhlyBlog/Filter/EntryFilter.php',
     'PhlyBlog\Filter\AuthorFilter'      => __DIR__ . '/src/PhlyBlog/Filter/AuthorFilter.php',
+    'PhlyBlog\Filter\AuthorIsValid'     => __DIR__ . '/src/PhlyBlog/Filter/AuthorIsValid.php',
     'PhlyBlog\Filter\Tags'              => __DIR__ . '/src/PhlyBlog/Filter/Tags.php',
     'PhlyBlog\Filter\Url'               => __DIR__ . '/src/PhlyBlog/Filter/Url.php',
     'PhlyBlog\Filter\Permalink'         => __DIR__ . '/src/PhlyBlog/Filter/Permalink.php',
