@@ -15,7 +15,7 @@ class AuthorFilter extends InputFilter
         );
 
         $validatorRules = array(
-            'id'        => array('not_empty', 'message' => 'Missing identifier (short name).'),
+            'id'        => array(new AuthorIsValid(), 'message' => 'Missing identifier (short name).'),
             'name'      => array(array('string_length', 1), 'message' => 'Name must be at least 1 characters in length, and non-empty.', 'required' => true),
             'email'     => array('emailaddress', 'message' => 'Invalid email address provided', 'allowEmpty' => true),
             'url'       => array(new Url(), 'message' => 'Invalid url provided', 'allowEmpty' => true),

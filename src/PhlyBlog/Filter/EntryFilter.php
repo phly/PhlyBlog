@@ -12,8 +12,13 @@ class EntryFilter extends InputFilter
             'id'         => 'string_trim',
             'title'      => array('string_trim', 'strip_tags'),
             'body'       => 'string_trim',
+            'author'     => array(array('callback', function($value) {
+                if (is_array($value) || is_object($value)) {
+                    return $value;
+                }
+                return trim($value);
+            })),
             'extended'   => 'string_trim',
-            'author'     => 'string_trim',
             'is_public'  => 'boolean',
             'is_draft'   => 'boolean',
             'timezone'   => 'string_trim',
@@ -24,7 +29,7 @@ class EntryFilter extends InputFilter
             'title'     => array(array('string_length', 3), 'message' => 'Title must be at least 3 characters in length, and non-empty.'),
             'body'      => array('allowEmpty' => true),
             'extended'  => array('allowEmpty' => true),
-            'author'    => array('not_empty', 'message' => 'Please login and provide your nom de plume.'),
+            'author'    => array('not_empty', new AuthorIsValid(), 'message' => 'Please login and provide your nom de plume.'),
             'created'   => array(
                 'int',
                 'message'    => 'Invalid timestamp for creation date.',
