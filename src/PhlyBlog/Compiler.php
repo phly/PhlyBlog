@@ -17,6 +17,7 @@ use DateTime,
 
 class Compiler
 {
+    protected $authors;
     protected $byAuthor;
     protected $byDay;
     protected $byMonth;
@@ -233,6 +234,41 @@ class Compiler
         }
     }
 
+    public function compilePaginatedEntriesByAuthor($template = null)
+    {
+        if (null === $template) {
+            $template = $this->options->getByAuthorTemplate();
+            if (empty($template)) {
+                throw new \DomainException('No template provided for listing entries by author');
+            }
+        }
+
+        $filenameTemplate = $this->options->getByAuthorFilenameTemplate();
+        $urlTemplate      = $this->options->getByAuthorUrlTemplate();
+        $titleTemplate    = $this->options->getByAuthorTitle();
+
+        $this->prepareEntries();
+        foreach ($this->byAuthor as $author => $list) {
+            $title = sprintf($titleTemplate, $author);
+            if (isset($this->authors[$author])) {
+                $authorName = $this->authors[$author];
+                if ($authorName instanceof AuthorEntity) {
+                    $authorName = $authorName->getName() ?: $author;
+                }
+                $title = sprintf($titleTemplate, $authorName);
+            }
+            $this->iterateAndRenderList(
+                $list,
+                $filenameTemplate,
+                array($author),
+                $title,
+                $urlTemplate,
+                $author,
+                $template
+            );
+        }
+    }
+
     public function compileTagFeeds($type)
     {
         $type = strtolower($type);
@@ -264,6 +300,44 @@ class Compiler
         }
     }
 
+    public function compileAuthorFeeds($type)
+    {
+        $type = strtolower($type);
+        if (!in_array($type, array('atom', 'rss'))) {
+            throw new InvalidArgumentException('Feed type must be "atom" or "rss"');
+        }
+
+        $filenameTemplate = $this->options->getAuthorFeedFilenameTemplate();
+        $blogLinkTemplate = $this->options->getAuthorFeedBlogLinkTemplate();
+        $feedLinkTemplate = $this->options->getAuthorFeedFeedLinkTemplate();
+        $titleTemplate    = $this->options->getAuthorFeedTitleTemplate();
+
+        $this->prepareEntries();
+
+        foreach ($this->byAuthor as $author => $list) {
+            $title = sprintf($titleTemplate, $author);
+            if (isset($this->authors[$author])) {
+                $authorName = $this->authors[$author];
+                if ($authorName instanceof AuthorEntity) {
+                    $authorName = $authorName->getName() ?: $author;
+                }
+                $title = sprintf($titleTemplate, $authorName);
+            }
+
+            $filename = sprintf($filenameTemplate, $author, $type);
+            $blogLink = sprintf($blogLinkTemplate, str_replace(' ', '+', $author));
+            $feedLink = sprintf($feedLinkTemplate, str_replace(' ', '+', $author), $type);
+
+            $this->iterateAndGenerateFeed(
+                $type,
+                $list,
+                $title,
+                $blogLink,
+                $feedLink,
+                $filename
+            );
+        }
+    }
 
     /**
      * Compile a tag cloud from the entries
@@ -327,6 +401,7 @@ class Compiler
         $byDay        = array();
         $byTag        = array();
         $byAuthor     = array();
+        $authors      = array();
         foreach ($this->files as $file) {
             $entry = include $file->getRealPath();
             if (!$entry instanceof EntryEntity) {
@@ -389,7 +464,17 @@ class Compiler
             // Finally, by author
             $author = $entry->getAuthor();
             if ($author instanceof AuthorEntity) {
-                $author = $author->getId();
+                // If we have an AuthorEntity, populate our authors array with it
+                $authorName = $author->getId();
+                if (!isset($authors[$authorName]) || is_string($authors[$authorName])) {
+                    $authors[$authorName] = $author;
+                }
+                $author = $authorName;
+            } else {
+                // only populate our authors array if we cannot find another
+                if (!isset($authors[$author])) {
+                    $authors[$author] = $author;
+                }
             }
             if (!isset($byAuthor[$author])) {
                 $byAuthor[$author] = new Compiler\SortedEntries();
@@ -427,6 +512,7 @@ class Compiler
             $byAuthor[$author] = iterator_to_array($heap);
         }
         $this->byAuthor = $byAuthor;
+        $this->authors  = $authors;
     }
 
     /**

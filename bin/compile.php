@@ -61,6 +61,10 @@ echo "Compiling paginated entries by tag...";
 $compiler->compilePaginatedEntriesByTag();
 echo "DONE!\n";
 
+echo "Compiling paginated entries by author...";
+$compiler->compilePaginatedEntriesByAuthor();
+echo "DONE!\n";
+
 echo "Compiling entries...";
 $compiler->compileEntryViewScripts();
 echo "DONE!\n";
@@ -79,4 +83,12 @@ echo "DONE!\n";
 
 echo "Compiling RSS tag feeds...";
 $compiler->compileTagFeeds('rss');
+echo "DONE!\n";
+
+echo "Compiling Atom author feeds...";
+$compiler->compileAuthorFeeds('atom');
+echo "DONE!\n";
+
+echo "Compiling RSS author feeds...";
+$compiler->compileAuthorFeeds('rss');
 echo "DONE!\n";

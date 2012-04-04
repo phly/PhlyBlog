@@ -446,6 +446,114 @@ class CompilerOptions extends Options
         return $this->tagFeedTitleTemplate;
     }
 
+    protected $byAuthorTemplate;
+
+    public function setByAuthorTemplate($byAuthorTemplate)
+    {
+        $this->byAuthorTemplate = (string) $byAuthorTemplate;
+        return $this;
+    }
+
+    public function getByAuthorTemplate()
+    {
+        $template = $this->byAuthorTemplate;
+        if (empty($template)) {
+            $template = $this->getEntriesTemplate();
+        }
+        return $template;
+    }
+
+    protected $byAuthorFilenameTemplate = 'author/%s-p%d.html';
+
+    public function setByAuthorFilenameTemplate($byAuthorFilenameTemplate)
+    {
+        $this->byAuthorFilenameTemplate = (string) $byAuthorFilenameTemplate;
+        return $this;
+    }
+
+    public function getByAuthorFilenameTemplate()
+    {
+        return $this->byAuthorFilenameTemplate;
+    }
+
+    protected $byAuthorUrlTemplate = '/blog/author/%s-p%d.html';
+
+    public function setByAuthorUrlTemplate($byAuthorUrlTemplate)
+    {
+        $this->byAuthorUrlTemplate = (string) $byAuthorUrlTemplate;
+        return $this;
+    }
+
+    public function getByAuthorUrlTemplate()
+    {
+        return $this->byAuthorUrlTemplate;
+    }
+
+    protected $byAuthorTitle = 'Blog Entries by %s';
+
+    public function setByAuthorTitle($byAuthorTitle)
+    {
+        $this->byAuthorTitle = (string) $byAuthorTitle;
+        return $this;
+    }
+
+    public function getByAuthorTitle()
+    {
+        return $this->byAuthorTitle;
+    }
+
+    protected $authorFeedFilenameTemplate = 'blog/author/%s-%s.xml';
+
+    public function setAuthorFeedFilenameTemplate($authorFeedFilenameTemplate)
+    {
+        $this->authorFeedFilenameTemplate = (string) $authorFeedFilenameTemplate;
+        return $this;
+    }
+
+    public function getAuthorFeedFilenameTemplate()
+    {
+        return $this->authorFeedFilenameTemplate;
+    }
+
+    protected $authorFeedBlogLinkTemplate = '/blog/author/%s.html';
+
+    public function setAuthorFeedBlogLinkTemplate($authorFeedBlogLinkTemplate)
+    {
+        $this->authorFeedBlogLinkTemplate = (string) $authorFeedBlogLinkTemplate;
+        return $this;
+    }
+
+    public function getAuthorFeedBlogLinkTemplate()
+    {
+        return $this->authorFeedBlogLinkTemplate;
+    }
+
+    protected $authorFeedFeedLinkTemplate = '/blog/author/%s-%s.xml';
+
+    public function setAuthorFeedFeedLinkTemplate($authorFeedFeedLinkTemplate)
+    {
+        $this->authorFeedFeedLinkTemplate = (string) $authorFeedFeedLinkTemplate;
+        return $this;
+    }
+
+    public function getAuthorFeedFeedLinkTemplate()
+    {
+        return $this->authorFeedFeedLinkTemplate;
+    }
+
+    protected $authorFeedTitleTemplate = 'Author: %s';
+
+    public function setAuthorFeedTitleTemplate($authorFeedTitleTemplate)
+    {
+        $this->authorFeedTitleTemplate = (string) $authorFeedTitleTemplate;
+        return $this;
+    }
+
+    public function getAuthorFeedTitleTemplate()
+    {
+        return $this->authorFeedTitleTemplate;
+    }
+
 
     protected $tagCloudUrlTemplate = '/blog/tag/%s.html';
 
