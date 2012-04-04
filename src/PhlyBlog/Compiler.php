@@ -593,6 +593,8 @@ class Compiler
         $feed->setDateModified($latest->getUpdated());
 
         // Write feed to file
-        $this->writer->write(sprintf($filenameTemplate, $type), $feed->export($type));
+        $file = sprintf($filenameTemplate, $type);
+        $file = str_replace(' ', '+', $file);
+        $this->writer->write($file, $feed->export($type));
     }
 }
