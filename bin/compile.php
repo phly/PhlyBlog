@@ -2,12 +2,80 @@
 use PhlyBlog\Module;
 use PhlyBlog\Compiler;
 use PhlyBlog\CompilerOptions;
+use Zend\Console\Exception as GetoptException;
+use Zend\Console\Getopt;
 use Zend\Loader\AutoloaderFactory;
 use Zend\Module\Listener;
 use Zend\Module\Manager as ModuleManager;
 use Zend\Mvc\Application;
 use Zend\Mvc\Bootstrap;
 use Zend\View\Model\ViewModel;
+
+// Options
+// Assumes that $argv is already in scope
+try {
+    $options = new Getopt(array(
+        'help|h'    => 'Print this usage message',
+        'all|a'     => 'Execute all actions (default)',
+        'entries|e' => 'Compile entries',
+        'archive|c' => 'Compile paginated archive (and feed)',
+        'year|y'    => 'Compile paginated entries by year',
+        'month|m'   => 'Compile paginated entries by month',
+        'day|d'     => 'Compile paginated entries by day',
+        'tag|t'     => 'Compile paginated entries by tag (and feeds)',
+        'author|r'  => 'Compile paginated entries by author (and feeds)',
+    ), $argv);
+} catch (GetoptException $e) {
+    file_put_contents('php://stderr', $e->getUsageMessage());
+}
+
+if ($options->getOption('h')) {
+    echo $options->getUsageMessage();
+    exit(0);
+}
+
+$all      = true;
+$entries  = false;
+$archive  = false;
+$byYear   = false;
+$byMonth  = false;
+$byDay    = false;
+$byTag    = false;
+$byAuthor = false;
+
+if (!isset($options->a)
+    && (isset($options->e)
+       || isset($options->c)
+       || isset($options->y)
+       || isset($options->m)
+       || isset($options->d)
+       || isset($options->t)
+       || isset($options->r)
+    )
+) {
+    $all = false;
+    if (isset($options->e)) {
+        $entries = true;
+    }
+    if (isset($options->c)) {
+        $archive = true;
+    }
+    if (isset($options->y)) {
+        $byYear = true;
+    }
+    if (isset($options->m)) {
+        $byMonth = true;
+    }
+    if (isset($options->d)) {
+        $byDay = true;
+    }
+    if (isset($options->t)) {
+        $byTag = true;
+    }
+    if (isset($options->r)) {
+        $byAuthor = true;
+    }
+}
 
 // Get locator, and grab renderer and view from it
 $config   = Module::$config;
@@ -41,54 +109,68 @@ if ($config['blog']['cloud_callback']
 
 // compile!
 
-echo "Compiling paginated entries...";
-$compiler->compilePaginatedEntries();
-echo "DONE!\n";
+if ($all || $archive) {
+    echo "Compiling paginated entries...";
+    $compiler->compilePaginatedEntries();
+    echo "DONE!\n";
 
-echo "Compiling paginated entries by year...";
-$compiler->compilePaginatedEntriesByYear();
-echo "DONE!\n";
+    echo "Compiling main Atom feed...";
+    $compiler->compileRecentFeed('atom');
+    echo "DONE!\n";
 
-echo "Compiling paginated entries by month...";
-$compiler->compilePaginatedEntriesByMonth();
-echo "DONE!\n";
+    echo "Compiling main RSS feed...";
+    $compiler->compileRecentFeed('rss');
+    echo "DONE!\n";
+}
 
-echo "Compiling paginated entries by date...";
-$compiler->compilePaginatedEntriesByDate();
-echo "DONE!\n";
+if ($all || $byYear) {
+    echo "Compiling paginated entries by year...";
+    $compiler->compilePaginatedEntriesByYear();
+    echo "DONE!\n";
+}
 
-echo "Compiling paginated entries by tag...";
-$compiler->compilePaginatedEntriesByTag();
-echo "DONE!\n";
+if ($all || $byMonth) {
+    echo "Compiling paginated entries by month...";
+    $compiler->compilePaginatedEntriesByMonth();
+    echo "DONE!\n";
+}
 
-echo "Compiling paginated entries by author...";
-$compiler->compilePaginatedEntriesByAuthor();
-echo "DONE!\n";
+if ($all || $byDay) {
+    echo "Compiling paginated entries by date...";
+    $compiler->compilePaginatedEntriesByDate();
+    echo "DONE!\n";
+}
 
-echo "Compiling entries...";
-$compiler->compileEntryViewScripts();
-echo "DONE!\n";
+if ($all || $byTag) {
+    echo "Compiling paginated entries by tag...";
+    $compiler->compilePaginatedEntriesByTag();
+    echo "DONE!\n";
 
-echo "Compiling main Atom feed...";
-$compiler->compileRecentFeed('atom');
-echo "DONE!\n";
+    echo "Compiling Atom tag feeds...";
+    $compiler->compileTagFeeds('atom');
+    echo "DONE!\n";
 
-echo "Compiling main RSS feed...";
-$compiler->compileRecentFeed('rss');
-echo "DONE!\n";
+    echo "Compiling RSS tag feeds...";
+    $compiler->compileTagFeeds('rss');
+    echo "DONE!\n";
+}
 
-echo "Compiling Atom tag feeds...";
-$compiler->compileTagFeeds('atom');
-echo "DONE!\n";
+if ($all || $byAuthor) {
+    echo "Compiling paginated entries by author...";
+    $compiler->compilePaginatedEntriesByAuthor();
+    echo "DONE!\n";
 
-echo "Compiling RSS tag feeds...";
-$compiler->compileTagFeeds('rss');
-echo "DONE!\n";
+    echo "Compiling Atom author feeds...";
+    $compiler->compileAuthorFeeds('atom');
+    echo "DONE!\n";
 
-echo "Compiling Atom author feeds...";
-$compiler->compileAuthorFeeds('atom');
-echo "DONE!\n";
+    echo "Compiling RSS author feeds...";
+    $compiler->compileAuthorFeeds('rss');
+    echo "DONE!\n";
+}
 
-echo "Compiling RSS author feeds...";
-$compiler->compileAuthorFeeds('rss');
-echo "DONE!\n";
+if ($all || $entries) {
+    echo "Compiling entries...";
+    $compiler->compileEntryViewScripts();
+    echo "DONE!\n";
+}
