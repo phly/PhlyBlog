@@ -55,6 +55,10 @@ class Authors extends AbstractList
 
     public function createAuthorPages($template = null)
     {
+        if (!$this->entries) {
+            return;
+        }
+
         if (null === $template) {
             $template = $this->options->getByAuthorTemplate();
             if (empty($template)) {
@@ -89,6 +93,10 @@ class Authors extends AbstractList
 
     public function createAuthorFeeds($type)
     {
+        if (!$this->entries) {
+            return;
+        }
+
         $type = strtolower($type);
         if (!in_array($type, array('atom', 'rss'))) {
             throw new InvalidArgumentException('Feed type must be "atom" or "rss"');
