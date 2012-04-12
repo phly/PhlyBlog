@@ -52,6 +52,10 @@ class Entries implements ListenerAggregate
 
     public function createEntries($template = null)
     {
+        if (!$this->entries) {
+            return;
+        }
+
         if (null === $template) {
             $template = $this->options->getEntryTemplate();
             if (empty($template)) {
