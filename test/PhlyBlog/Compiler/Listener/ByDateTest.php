@@ -5,15 +5,15 @@ use DateTime;
 use DateTimezone;
 use PHPUnit_Framework_TestCase as TestCase;
 
-class ByMonthTest extends TestCase
+class ByDateTest extends TestCase
 {
     public function setUp()
     {
         TestHelper::injectScaffolds($this);
-        $this->byMonth = new ByMonth($this->view, $this->writer, $this->file, $this->options);
-        $this->compiler->events()->attach($this->byMonth);
+        $this->byDate = new ByDate($this->view, $this->writer, $this->file, $this->options);
+        $this->compiler->events()->attach($this->byDate);
 
-        $this->months = array();
+        $this->dates = array();
         $self = $this;
         $this->compiler->events()->attach('compile', function($e) use ($self) {
             $entry = $e->getEntry();
@@ -26,33 +26,33 @@ class ByMonthTest extends TestCase
             $date    = new DateTime();
             $date->setTimezone(new DateTimezone($tz));
             $date->setTimestamp($created);
-            $month   = $date->format('Y/m');
-            $self->months[$month] = $date;
+            $month   = $date->format('Y/m/d');
+            $self->dates[$month] = $date;
         });
     }
 
     public function testCreatesNoFilesPriorToCompilation()
     {
-        $this->byMonth->compile();
+        $this->byDate->compile();
         $this->assertTrue(empty($this->writer->files));
     }
 
     public function testCreatesFilesFollowingCompilation()
     {
         $this->compiler->compile();
-        $this->byMonth->compile();
+        $this->byDate->compile();
 
         $this->assertFalse(empty($this->writer->files));
-        $this->assertFalse(empty($this->months));
+        $this->assertFalse(empty($this->dates));
 
-        $filenameTemplate = $this->options->getByMonthFilenameTemplate();
+        $filenameTemplate = $this->options->getByDayFilenameTemplate();
         $filenameTemplate = str_replace('-p%d', '', $filenameTemplate);
-        $monthTitleTemplate = $this->options->getByMonthTitle();
-        foreach ($this->months as $month => $date) {
-            $filename = sprintf($filenameTemplate, $month);
+        $dateTitleTemplate = $this->options->getByDayTitle();
+        foreach ($this->dates as $day => $date) {
+            $filename = sprintf($filenameTemplate, $day);
             $this->assertArrayHasKey($filename, $this->writer->files);
-            $monthTitle = sprintf($monthTitleTemplate, $date->format('F Y'));
-            $this->assertContains($monthTitle, $this->writer->files[$filename]);
+            $dateTitle = sprintf($dateTitleTemplate, $date->format('d F Y'));
+            $this->assertContains($dateTitle, $this->writer->files[$filename]);
         }
     }
 }
