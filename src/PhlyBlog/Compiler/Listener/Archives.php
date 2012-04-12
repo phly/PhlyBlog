@@ -48,7 +48,7 @@ class Archives extends AbstractList
         $title            = $this->options->getEntriesTitle();
 
         $this->iterateAndRenderList(
-            $this->pagedEntries,
+            $this->archives,
             $filenameTemplate,
             array(),
             $title,
@@ -72,7 +72,7 @@ class Archives extends AbstractList
 
         $this->iterateAndGenerateFeed(
             $type,
-            $this->pagedEntries,
+            $this->archives,
             $title,
             $blogLink,
             $feedLink,
