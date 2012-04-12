@@ -78,6 +78,10 @@ abstract class AbstractList implements ListenerAggregate, ListenerInterface
         $substitution, 
         $template
     ) {
+        if (!is_array($list) || empty($list)) {
+            return;
+        }
+
         // Get a paginator for this list
         $paginator = $this->getPaginator($list);
 
@@ -117,6 +121,10 @@ abstract class AbstractList implements ListenerAggregate, ListenerInterface
         $feedLinkTemplate,
         $filenameTemplate
     ) {
+        if (!is_array($list) || empty($list)) {
+            return;
+        }
+
         $blogLink         = $this->options->getFeedHostname() . $blogLink;
         $feedLinkTemplate = $this->options->getFeedHostname() . $feedLinkTemplate;
         $linkTemplate     = $this->options->getFeedHostname() . $this->options->getEntryLinkTemplate();

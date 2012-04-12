@@ -14,10 +14,7 @@ class TagsTest extends TestCase
 
     public function testCreatesNoFilesPriorToCompilation()
     {
-        $this->tags->createTagPages();
-        $this->assertTrue(empty($this->writer->files));
-        $this->tags->createTagFeeds('rss');
-        $this->tags->createTagFeeds('atom');
+        $this->tags->compile();
         $this->assertTrue(empty($this->writer->files));
     }
 
