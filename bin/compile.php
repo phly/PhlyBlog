@@ -110,45 +110,47 @@ $compiler->events()->attach($tags);
 if ($all || $entries) {
     $entries = new Listener\Entries($view, $responseFile, $options);
     $compiler->events()->attach($entries);
-    $listeners[] = $entries;
+    $listeners['entries'] = $entries;
 }
 
 if ($all || $archive) {
     $archive = new Listener\Archives($view, $writer, $responseFile, $options);
     $compiler->events()->attach($archive);
-    $listeners[] = $archive;
+    $listeners['archives'] = $archive;
 }
 
 if ($all || $byYear) {
     $byYear = new Listener\ByYear($view, $writer, $responseFile, $options);
     $compiler->events()->attach($byYear);
-    $listeners[] = $byYear;
+    $listeners['entries by year'] = $byYear;
 }
 
 if ($all || $byMonth) {
     $byMonth = new Listener\ByMonth($view, $writer, $responseFile, $options);
     $compiler->events()->attach($byMonth);
-    $listeners[] = $byMonth;
+    $listeners['entries by month'] = $byMonth;
 }
 
 if ($all || $byDay) {
     $byDay = new Listener\ByDate($view, $writer, $responseFile, $options);
     $compiler->events()->attach($byDay);
-    $listeners[] = $byDay;
+    $listeners['entries by day'] = $byDay;
 }
 
 if ($all || $byAuthor) {
     $byAuthor = new Listener\Authors($view, $writer, $responseFile, $options);
     $compiler->events()->attach($byAuthor);
-    $listeners[] = $byAuthor;
+    $listeners['entries by author'] = $byAuthor;
 }
 
 if ($all || $byTag) {
-    $listeners[] = $tags;
+    $listeners['entries by tag'] = $tags;
 }
 
 // Compile
+echo "Compiling and sorting entries...";
 $compiler->compile();
+echo "DONE!\n";
 
 // Create tag cloud
 if ($config['blog']['cloud_callback'] 
@@ -162,6 +164,8 @@ if ($config['blog']['cloud_callback']
 }
 
 // compile various artifacts
-foreach ($listeners as $listener) {
+foreach ($listeners as $type => $listener) {
+    echo "Compiling " . $type . "...";
     $listener->compile();
+    echo "DONE!\n";
 }
