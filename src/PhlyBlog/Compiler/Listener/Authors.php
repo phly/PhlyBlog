@@ -46,6 +46,13 @@ class Authors extends AbstractList
         }
     }
 
+    public function compile()
+    {
+        $this->createAuthorPages();
+        $this->createAuthorFeeds('rss');
+        $this->createAuthorFeeds('atom');
+    }
+
     public function createAuthorPages($template = null)
     {
         if (null === $template) {

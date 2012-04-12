@@ -28,6 +28,13 @@ class Archives extends AbstractList
         $this->archives = iterator_to_array($this->archives);
     }
 
+    public function compile()
+    {
+        $this->createArchivePages();
+        $this->createArchiveFeed('rss');
+        $this->createArchiveFeed('atom');
+    }
+
     public function createArchivePages($template = null)
     {
         if (null === $template) {

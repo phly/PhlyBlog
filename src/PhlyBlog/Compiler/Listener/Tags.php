@@ -34,6 +34,13 @@ class Tags extends AbstractList
         }
     }
 
+    public function compile()
+    {
+        $this->createTagPages();
+        $this->createTagFeeds('rss');
+        $this->createTagFeeds('atom');
+    }
+
     public function getTagCloud()
     {
         if ($this->tagCloud) {

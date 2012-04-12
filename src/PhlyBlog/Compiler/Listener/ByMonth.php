@@ -32,6 +32,11 @@ class ByMonth extends AbstractList
         }
     }
 
+    public function compile()
+    {
+        $this->createMonthPages();
+    }
+
     public function createMonthPages($template = null)
     {
         if (null === $template) {

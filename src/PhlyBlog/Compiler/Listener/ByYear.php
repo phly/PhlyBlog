@@ -32,6 +32,11 @@ class ByYear extends AbstractList
         }
     }
 
+    public function compile()
+    {
+        $this->createYearPages();
+    }
+
     public function createYearPages($template = null)
     {
         if (null === $template) {

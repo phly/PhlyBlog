@@ -14,7 +14,7 @@ use Zend\Paginator\Paginator;
 use Zend\View\Model\ViewModel;
 use Zend\View\View;
 
-abstract class AbstractList implements ListenerAggregate
+abstract class AbstractList implements ListenerAggregate, ListenerInterface
 {
     protected $listeners = array();
     protected $options;

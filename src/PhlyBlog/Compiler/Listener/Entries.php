@@ -45,6 +45,11 @@ class Entries implements ListenerAggregate
         $this->entries[] = $entry;
     }
 
+    public function compile()
+    {
+        $this->createEntries();
+    }
+
     public function createEntries($template = null)
     {
         if (null === $template) {

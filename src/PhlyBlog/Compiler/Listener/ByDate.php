@@ -32,6 +32,11 @@ class ByDate extends AbstractList
         }
     }
 
+    public function compile()
+    {
+        $this->createDayPages();
+    }
+
     public function createDayPages($template = null)
     {
         if (null === $template) {

@@ -2,10 +2,12 @@
 use PhlyBlog\Module;
 use PhlyBlog\Compiler;
 use PhlyBlog\CompilerOptions;
+use PhlyBlog\Compiler\Listener;
+use PhlyBlog\Compiler\ResponseFile;
+use PhlyBlog\Compiler\ResponseStrategy;
 use Zend\Console\Exception as GetoptException;
 use Zend\Console\Getopt;
 use Zend\Loader\AutoloaderFactory;
-use Zend\Module\Listener;
 use Zend\Module\Manager as ModuleManager;
 use Zend\Mvc\Application;
 use Zend\Mvc\Bootstrap;
@@ -84,6 +86,7 @@ $view     = $locator->get('Zend\View\View');
 $view->events()->clearListeners('renderer');
 $view->events()->clearListeners('response');
 
+
 // Setup renderer for layout, and layout view model
 if ($config['blog']['view_callback'] && is_callable($config['blog']['view_callback'])) {
     $callable = $config['blog']['view_callback'];
@@ -91,10 +94,61 @@ if ($config['blog']['view_callback'] && is_callable($config['blog']['view_callba
 }
 
 // Prepare compiler and grab tag cloud
+$writer           = new Compiler\FileWriter();
+$responseFile     = new ResponseFile();
+$responseStrategy = new ResponseStrategy($writer, $responseFile, $view);
+
 $options   = new CompilerOptions($config['blog']['options']);
+
 $postFiles = new Compiler\PhpFileFilter($config['blog']['posts_path']);
-$writer    = new Compiler\FileWriter();
-$compiler  = new Compiler($postFiles, $view, $writer, $options);
+$compiler  = new Compiler($postFiles);
+
+$listeners = array();
+$tags = new Listener\Tags($view, $writer, $responseFile, $options);
+$compiler->events()->attach($tags);
+
+if ($all || $entries) {
+    $entries = new Listener\Entries($view, $responseFile, $options);
+    $compiler->events()->attach($entries);
+    $listeners[] = $entries;
+}
+
+if ($all || $archive) {
+    $archive = new Listener\Archives($view, $writer, $responseFile, $options);
+    $compiler->events()->attach($archive);
+    $listeners[] = $archive;
+}
+
+if ($all || $byYear) {
+    $byYear = new Listener\ByYear($view, $writer, $responseFile, $options);
+    $compiler->events()->attach($byYear);
+    $listeners[] = $byYear;
+}
+
+if ($all || $byMonth) {
+    $byMonth = new Listener\ByMonth($view, $writer, $responseFile, $options);
+    $compiler->events()->attach($byMonth);
+    $listeners[] = $byMonth;
+}
+
+if ($all || $byDay) {
+    $byDay = new Listener\ByDate($view, $writer, $responseFile, $options);
+    $compiler->events()->attach($byDay);
+    $listeners[] = $byDay;
+}
+
+if ($all || $byAuthor) {
+    $byAuthor = new Listener\ByAuthor($view, $writer, $responseFile, $options);
+    $compiler->events()->attach($byAuthor);
+    $listeners[] = $byAuthor;
+}
+
+if ($all || $byTag) {
+    $listeners[] = $tags;
+}
+
+// Compile
+$compiler->compile();
 
 // Create tag cloud
 if ($config['blog']['cloud_callback'] 
@@ -102,75 +156,12 @@ if ($config['blog']['cloud_callback']
 ) {
     $callable = $config['blog']['cloud_callback'];
     echo "Creating and rendering tag cloud...";
-    $cloud = $compiler->compileTagCloud();
+    $cloud = $tags->getTagCloud();
     call_user_func($callable, $cloud, $view, $config, $locator);
     echo "DONE!\n";
 }
 
-// compile!
-
-if ($all || $archive) {
-    echo "Compiling paginated entries...";
-    $compiler->compilePaginatedEntries();
-    echo "DONE!\n";
-
-    echo "Compiling main Atom feed...";
-    $compiler->compileRecentFeed('atom');
-    echo "DONE!\n";
-
-    echo "Compiling main RSS feed...";
-    $compiler->compileRecentFeed('rss');
-    echo "DONE!\n";
-}
-
-if ($all || $byYear) {
-    echo "Compiling paginated entries by year...";
-    $compiler->compilePaginatedEntriesByYear();
-    echo "DONE!\n";
-}
-
-if ($all || $byMonth) {
-    echo "Compiling paginated entries by month...";
-    $compiler->compilePaginatedEntriesByMonth();
-    echo "DONE!\n";
-}
-
-if ($all || $byDay) {
-    echo "Compiling paginated entries by date...";
-    $compiler->compilePaginatedEntriesByDate();
-    echo "DONE!\n";
-}
-
-if ($all || $byTag) {
-    echo "Compiling paginated entries by tag...";
-    $compiler->compilePaginatedEntriesByTag();
-    echo "DONE!\n";
-
-    echo "Compiling Atom tag feeds...";
-    $compiler->compileTagFeeds('atom');
-    echo "DONE!\n";
-
-    echo "Compiling RSS tag feeds...";
-    $compiler->compileTagFeeds('rss');
-    echo "DONE!\n";
-}
-
-if ($all || $byAuthor) {
-    echo "Compiling paginated entries by author...";
-    $compiler->compilePaginatedEntriesByAuthor();
-    echo "DONE!\n";
-
-    echo "Compiling Atom author feeds...";
-    $compiler->compileAuthorFeeds('atom');
-    echo "DONE!\n";
-
-    echo "Compiling RSS author feeds...";
-    $compiler->compileAuthorFeeds('rss');
-    echo "DONE!\n";
-}
-
-if ($all || $entries) {
-    echo "Compiling entries...";
-    $compiler->compileEntryViewScripts();
-    echo "DONE!\n";
+// compile various artifacts
+foreach ($listeners as $listener) {
+    $listener->compile();
 }
