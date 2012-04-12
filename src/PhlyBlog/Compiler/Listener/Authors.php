@@ -24,7 +24,7 @@ class Authors extends AbstractList
             // If we have an AuthorEntity, populate our authors array with it
             $authorName = $author->getId();
             if (!isset($this->authors[$authorName]) || is_string($this->authors[$authorName])) {
-                $authors[$authorName] = $author;
+                $this->authors[$authorName] = $author;
             }
             $author = $authorName;
         } else {
