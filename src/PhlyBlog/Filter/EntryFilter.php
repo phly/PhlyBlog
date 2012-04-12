@@ -40,8 +40,8 @@ class EntryFilter extends InputFilter
                 'message'    => 'Invalid timestamp for updated date.',
                 'allowEmpty' => true,
             ),
-            'is_draft'  => array(array('callback', 'is_bool'), 'presence' => 'required', 'allowEmpty' => true, 'message' => 'Please select a flag indicating draft status.'),
-            'is_public' => array(array('callback', 'is_bool'), 'presence' => 'required', 'allowEmpty' => true, 'message' => 'Please select a flag indicating publication status.'),
+            'is_draft'  => array(array('InArray', array('haystack' => array(true, false), 'strict' => true)), 'presence' => 'required', 'allowEmpty' => true, 'message' => 'Please select a flag indicating draft status.'),
+            'is_public' => array(array('InArray', array('haystack' => array(true, false), 'strict' => true)), 'presence' => 'required', 'allowEmpty' => true, 'message' => 'Please select a flag indicating publication status.'),
             'tags'      => new Tags(),
             'timezone'  => array(new TimezoneValidator(), 'required' => true),
         );

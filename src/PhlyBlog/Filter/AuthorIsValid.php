@@ -23,7 +23,7 @@ class AuthorIsValid extends AbstractValidator
         $this->setValue($value);
 
         if (is_string($value)) {
-            if (strlen($value) < 0) {
+            if (strlen($value) < 1) {
                 $this->error(self::INVALID_NAME_TOO_SHORT);
                 return false;
             }
