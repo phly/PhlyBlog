@@ -28,6 +28,6 @@ class ResponseStrategy
             $file = preg_replace('/-p1(\.html)$/', '$1', $file);
         }
         $file = str_replace(' ', '+', $file);
-        $writer->write($file, $result);
+        $this->writer->write($file, $result);
     }
 }
