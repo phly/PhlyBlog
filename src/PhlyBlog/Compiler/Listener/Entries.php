@@ -8,7 +8,7 @@ use PhlyBlog\Compiler\ResponseFile;
 use Zend\EventManager\EventCollection as Events;
 use Zend\EventManager\ListenerAggregate;
 use Zend\View\View;
-use Zend\View\ViewModel;
+use Zend\View\Model\ViewModel;
 
 class Entries implements ListenerAggregate
 {
