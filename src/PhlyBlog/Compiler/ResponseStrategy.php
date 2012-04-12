@@ -20,10 +20,6 @@ class ResponseStrategy
     {
         $result = $e->getResult();
         $file   = $this->file->getFilename();
-        $dir    = dirname($file);
-        if (!file_exists($dir) || !is_dir($dir)) {
-            mkdir($dir, 0777, true);
-        }
         if (preg_match('/-p1.html$/', $file)) {
             $file = preg_replace('/-p1(\.html)$/', '$1', $file);
         }
