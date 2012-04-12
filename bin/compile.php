@@ -138,7 +138,7 @@ if ($all || $byDay) {
 }
 
 if ($all || $byAuthor) {
-    $byAuthor = new Listener\ByAuthor($view, $writer, $responseFile, $options);
+    $byAuthor = new Listener\Authors($view, $writer, $responseFile, $options);
     $compiler->events()->attach($byAuthor);
     $listeners[] = $byAuthor;
 }
