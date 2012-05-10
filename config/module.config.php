@@ -56,7 +56,7 @@ $config['di'] = array(
     )),
     
     /* Routes are only included to simplify url creation */
-    'Zend\Mvc\Router\RouteStack' => array('parameters' => array(
+    'Zend\Mvc\Router\RouteStackInterface' => array('parameters' => array(
         'routes' => array(
             'phly-blog' => array(
                 'type' => 'Literal',
