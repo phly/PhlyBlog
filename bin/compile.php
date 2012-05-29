@@ -7,11 +7,6 @@ use PhlyBlog\Compiler\ResponseFile;
 use PhlyBlog\Compiler\ResponseStrategy;
 use Zend\Console\Exception as GetoptException;
 use Zend\Console\Getopt;
-use Zend\Loader\AutoloaderFactory;
-use Zend\Module\Manager as ModuleManager;
-use Zend\Mvc\Application;
-use Zend\Mvc\Bootstrap;
-use Zend\View\Model\ViewModel;
 
 // Options
 // Assumes that $argv is already in scope
@@ -83,9 +78,11 @@ if (!isset($options->a)
 $config   = Module::$config;
 $locator  = $application->getServiceManager();
 $view     = $locator->get('View');
+
+$view->setRequest($application->getRequest());
+$view->setResponse($application->getResponse());
 $view->events()->clearListeners('renderer');
 $view->events()->clearListeners('response');
-
 
 // Setup renderer for layout, and layout view model
 if ($config['blog']['view_callback'] && is_callable($config['blog']['view_callback'])) {

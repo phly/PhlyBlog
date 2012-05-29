@@ -32,7 +32,7 @@ return array(
             )),
         ),
         'posts_path'     => 'data/blog/',
-        'view_callback'  => array('PhlyBlog\Module', 'prepareCompilerView'),
+        'view_callback'  => 'PhlyBlog\Module::prepareCompilerView',
         'cloud_callback' => false,
     ),
 
