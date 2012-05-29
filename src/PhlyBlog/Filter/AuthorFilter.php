@@ -1,30 +1,60 @@
 <?php
 namespace PhlyBlog\Filter;
 
-use Zend\Filter\InputFilter;
+use Zend\InputFilter\InputFilter;
 
 class AuthorFilter extends InputFilter
 {
     public function __construct()
     {
-        $filterRules = array(
-            'id'    => 'string_trim',
-            'name'  => array('string_trim', 'strip_tags'),
-            'email' => 'string_trim',
-            'url'   => 'string_trim',
-        );
+        $this->add(array(
+            'name' => 'id',
+            'filters' => array(
+                array('name' => 'string_trim'),
+            ),
+            'validators' => array(
+                new AuthorIsValid(),
+            ),
+            'required' => true,
+        ));
 
-        $validatorRules = array(
-            'id'        => array(new AuthorIsValid(), 'message' => 'Missing identifier (short name).'),
-            'name'      => array(array('string_length', 1), 'message' => 'Name must be at least 1 characters in length, and non-empty.', 'required' => true),
-            'email'     => array('emailaddress', 'message' => 'Invalid email address provided', 'allowEmpty' => true),
-            'url'       => array(new Url(), 'message' => 'Invalid url provided', 'allowEmpty' => true),
-        );
+        $this->add(array(
+            'name' => 'name',
+            'filters' => array(
+                array('name' => 'string_trim'),
+                array('name' => 'strip_tags'),
+            ),
+            'validators' => array(
+                array(
+                    'name' => 'string_length',
+                    'options' => array(
+                        'min' => 1,
+                    ),
+                ),
+            ),
+            'required' => true,
+        ));
 
-        $options = array(
-            'escapeFilter' => 'string_trim',
-        );
+        $this->add(array(
+            'name' => 'email',
+            'filters' => array(
+                array('name' => 'string_trim'),
+            ),
+            'validators' => array(
+                array('name' => 'emailaddress'),
+            ),
+            'allow_empty' => true,
+        ));
 
-        parent::__construct($filterRules, $validatorRules, null, $options);
+        $this->add(array(
+            'name' => 'url',
+            'filters' => array(
+                array('name' => 'string_trim'),
+            ),
+            'validators' => array(
+                new Url(),
+            ),
+            'allow_empty' => true,
+        ));
     }
 }

@@ -1,62 +1,55 @@
 <?php
-$config = array();
-
-$config['blog'] = array(
-    'options' => array(
-        'author_feed_filename_template' => 'public/blog/author/%s-%s.xml',
-        'author_feed_title_template'    => 'Author: %s',
-        'by_author_filename_template'   => 'public/blog/author/%s-p%d.html',
-        'by_day_filename_template'      => 'public/blog/day/%s-p%d.html',
-        'by_month_filename_template'    => 'public/blog/month/%s-p%d.html',
-        'by_tag_filename_template'      => 'public/blog/tag/%s-p%d.html',
-        'by_year_filename_template'     => 'public/blog/year/%s-p%d.html',
-        'entries_filename_template'     => 'public/blog-p%d.html',
-        'entries_template'              => 'phly-blog/list',
-        'entry_filename_template'       => 'public/blog/%s.html',
-        'entry_link_template'           => '/blog/%s.html',
-        'entry_template'                => 'phly-blog/entry',
-        'feed_author_email'             => 'you@your.tld',
-        'feed_author_name'              => "Your name here",
-        'feed_author_uri'               => 'http://your.tld',
-        'feed_filename'                 => 'public/blog-%s.xml',
-        'feed_hostname'                 => 'http://your.tld',
-        'feed_title'                    => 'Blog Entries',
-        'tag_feed_filename_template'    => 'public/blog/tag/%s-%s.xml',
-        'tag_feed_title_template'       => 'Tag: %s',
-        'tag_cloud_options'             => array('tagDecorator'              => array(
-            'decorator' => 'html_tag',
-            'options'   => array(
-                'fontSizeUnit' => '%',
-                'minFontSize'  => 80,
-                'maxFontSize'  => 300,
-            ),
-        )),
+return array(
+    'blog' => array(
+        'options' => array(
+            'author_feed_filename_template' => 'public/blog/author/%s-%s.xml',
+            'author_feed_title_template'    => 'Author: %s',
+            'by_author_filename_template'   => 'public/blog/author/%s-p%d.html',
+            'by_day_filename_template'      => 'public/blog/day/%s-p%d.html',
+            'by_month_filename_template'    => 'public/blog/month/%s-p%d.html',
+            'by_tag_filename_template'      => 'public/blog/tag/%s-p%d.html',
+            'by_year_filename_template'     => 'public/blog/year/%s-p%d.html',
+            'entries_filename_template'     => 'public/blog-p%d.html',
+            'entries_template'              => 'phly-blog/list',
+            'entry_filename_template'       => 'public/blog/%s.html',
+            'entry_link_template'           => '/blog/%s.html',
+            'entry_template'                => 'phly-blog/entry',
+            'feed_author_email'             => 'you@your.tld',
+            'feed_author_name'              => "Your name here",
+            'feed_author_uri'               => 'http://your.tld',
+            'feed_filename'                 => 'public/blog-%s.xml',
+            'feed_hostname'                 => 'http://your.tld',
+            'feed_title'                    => 'Blog Entries',
+            'tag_feed_filename_template'    => 'public/blog/tag/%s-%s.xml',
+            'tag_feed_title_template'       => 'Tag: %s',
+            'tag_cloud_options'             => array('tagDecorator'              => array(
+                'decorator' => 'html_tag',
+                'options'   => array(
+                    'fontSizeUnit' => '%',
+                    'minFontSize'  => 80,
+                    'maxFontSize'  => 300,
+                ),
+            )),
+        ),
+        'posts_path'     => 'data/blog/',
+        'view_callback'  => array('PhlyBlog\Module', 'prepareCompilerView'),
+        'cloud_callback' => false,
     ),
-    'posts_path'     => 'data/blog/',
-    'view_callback'  => array('PhlyBlog\Module', 'prepareCompilerView'),
-    'cloud_callback' => false,
-);
 
-$config['di'] = array(
-'instance' => array(
-    'Zend\View\Resolver\TemplateMapResolver' => array('parameters' => array(
-        'map' => array(
+    'view_manager' => array(
+        'template_map' => array(
             'phly-blog/entry-short'  => __DIR__ . '/../view/phly-blog/entry-short.phtml',
             'phly-blog/entry'        => __DIR__ . '/../view/phly-blog/entry.phtml',
             'phly-blog/list'         => __DIR__ . '/../view/phly-blog/list.phtml',
             'phly-blog/paginator'    => __DIR__ . '/../view/phly-blog/paginator.phtml',
             'phly-blog/tags'         => __DIR__ . '/../view/phly-blog/tags.phtml',
         ),
-    )),
-
-    'Zend\View\Resolver\TemplatePathStack' => array('parameters' => array(
-        'paths' => array(
+        'template_path_stack' => array(
             'phly-blog' => __DIR__ . '/../view',
         ),
-    )),
-    
-    /* Routes are only included to simplify url creation */
-    'Zend\Mvc\Router\RouteStackInterface' => array('parameters' => array(
+    ),
+
+    'router' => array(
         'routes' => array(
             'phly-blog' => array(
                 'type' => 'Literal',
@@ -194,7 +187,5 @@ $config['di'] = array(
                 ),
             ),
         ),
-    )),
-));
-
-return $config;
+    ),
+);

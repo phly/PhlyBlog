@@ -6,15 +6,15 @@ use PhlyBlog\CompilerOptions;
 use PhlyBlog\Compiler\Event;
 use PhlyBlog\Compiler\ResponseFile;
 use PhlyBlog\Compiler\WriterInterface;
-use Zend\EventManager\EventCollection as Events;
-use Zend\EventManager\ListenerAggregate;
+use Zend\EventManager\EventManagerInterface as Events;
+use Zend\EventManager\ListenerAggregateInterface;
 use Zend\Feed\Writer\Feed as FeedWriter;
 use Zend\Paginator\Adapter\ArrayAdapter as ArrayPaginator;
 use Zend\Paginator\Paginator;
 use Zend\View\Model\ViewModel;
 use Zend\View\View;
 
-abstract class AbstractList implements ListenerAggregate, ListenerInterface
+abstract class AbstractList implements ListenerAggregateInterface, ListenerInterface
 {
     protected $listeners = array();
     protected $options;

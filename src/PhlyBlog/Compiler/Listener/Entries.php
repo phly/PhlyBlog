@@ -5,12 +5,12 @@ use DomainException;
 use PhlyBlog\CompilerOptions;
 use PhlyBlog\Compiler\Event;
 use PhlyBlog\Compiler\ResponseFile;
-use Zend\EventManager\EventCollection as Events;
-use Zend\EventManager\ListenerAggregate;
+use Zend\EventManager\EventManagerInterface as Events;
+use Zend\EventManager\ListenerAggregateInterface;
 use Zend\View\View;
 use Zend\View\Model\ViewModel;
 
-class Entries implements ListenerAggregate
+class Entries implements ListenerAggregateInterface
 {
     protected $entries;
     protected $listeners = array();

@@ -16,7 +16,7 @@ class TestHelper
     {
         $options = include __DIR__ . '/../../../../config/module.config.php';
 
-        $router = TreeRouteStack::factory($options['di']['instance']['Zend\Mvc\Router\RouteStack']['parameters']);
+        $router = TreeRouteStack::factory($options['router']);
 
         $resolver = new Resolver\TemplatePathStack();
         $resolver->addPath(__DIR__ . '/../../../../view');
@@ -34,7 +34,7 @@ class TestHelper
         $testCase->writer   = new TestAsset\MockWriter;
         $testCase->strategy = new Compiler\ResponseStrategy($testCase->writer, $testCase->file, $testCase->view);
         $testCase->compiler = new Compiler(new Compiler\PhpFileFilter(__DIR__ . '/../../_posts'));
-        $json           = file_get_contents(__DIR__ . '/../../_posts/metadata.json');
+        $json               = file_get_contents(__DIR__ . '/../../_posts/metadata.json');
         $testCase->metadata = json_decode($json, true);
         $testCase->expected = include(__DIR__ . '/../../_posts/metadata.php');
     }

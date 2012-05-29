@@ -81,8 +81,8 @@ if (!isset($options->a)
 
 // Get locator, and grab renderer and view from it
 $config   = Module::$config;
-$locator  = $application->getLocator();
-$view     = $locator->get('Zend\View\View');
+$locator  = $application->getServiceManager();
+$view     = $locator->get('View');
 $view->events()->clearListeners('renderer');
 $view->events()->clearListeners('response');
 

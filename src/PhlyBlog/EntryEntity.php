@@ -3,7 +3,7 @@ namespace PhlyBlog;
 
 use PhlyCommon\Entity as EntityDefinition,
     PhlyCommon\Filter\Timestamp as TimestampFilter,
-    Zend\Filter\InputFilter;
+    Zend\InputFilter\InputFilterInterface;
 
 class EntryEntity implements EntityDefinition
 {
@@ -576,7 +576,7 @@ class EntryEntity implements EntityDefinition
         return $this;
     }
 
-    public function setInputFilter(InputFilter $filter)
+    public function setInputFilter(InputFilterInterface $filter)
     {
         $this->filter = $filter;
         return $this;
@@ -599,7 +599,7 @@ class EntryEntity implements EntityDefinition
 
         // If valid, push the filtered values back into the object
         if ($valid) {
-            $this->fromArray($filter->getEscaped());
+            $this->fromArray($filter->getValues());
         }
 
         // Return validation result

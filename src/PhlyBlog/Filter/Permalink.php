@@ -2,9 +2,9 @@
 
 namespace PhlyBlog\Filter;
 
-use Zend\Filter\Filter;
+use Zend\Filter\FilterInterface;
 
-class Permalink implements Filter
+class Permalink implements FilterInterface
 {
     public function filter($value)
     {

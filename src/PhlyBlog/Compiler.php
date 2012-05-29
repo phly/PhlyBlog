@@ -3,10 +3,14 @@ namespace PhlyBlog;
 
 use DateTime;
 use DateTimezone;
-use Zend\EventManager\EventCollection;
+use Zend\EventManager\EventManagerAwareInterface;
+use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\EventManager;
+use Zend\EventManager\EventsCapableInterface;
 
-class Compiler
+class Compiler implements
+    EventManagerAwareInterface,
+    EventsCapableInterface
 {
     protected $events;
     protected $files;
@@ -16,7 +20,7 @@ class Compiler
         $this->files  = $files;
     }
 
-    public function setEventManager(EventCollection $events)
+    public function setEventManager(EventManagerInterface $events)
     {
         $events->setIdentifiers(array(
             __CLASS__,
