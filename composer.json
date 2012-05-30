@@ -1,0 +1,32 @@
+{
+    "name": "phly/phly-blog",
+    "description": "ZF2 Module implementing a static blog generator",
+    "type": "library",
+    "keywords": [
+        "zf2",
+        "zend",
+        "module",
+        "blog"
+    ],
+    "homepage": "https://github.com/weierophinney/PhlyBlog",
+    "authors": [
+        {
+            "name": "Matthew Weier O'Phinney",
+            "email": "matthew@weierophinney.net",
+            "homepage": "http://mwop.net/"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "zendframework/zendframework": "dev-master",
+        "phly/phly-common": "dev-master"
+    },
+    "autoload": {
+        "psr-0": {
+            "PhlyBlog": "src/"
+        },
+        "classmap": [
+            "./"
+        ]
+    }
+}
