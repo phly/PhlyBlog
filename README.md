@@ -13,14 +13,35 @@ Requirements
 ----
 
 * PHP >= 5.3.3
-* Zend Framework 2 >= 2.0.0beta3, specifically: 
+* Zend Framework 2 >= 2.0.0beta4, specifically: 
   * Zend\View\View, used to render and write generated files
-  * Zend\Mvc and Zend\Module, as this implements a module, and the compiler
-    script depends on it and an Application instance. As such, it also has
-    a dependency on Zend\Loader, Zend\Di, and Zend\EventManager.
+  * Zend\Mvc and Zend\ModuleManager, as this implements a module, and the
+    compiler script depends on it and an Application instance. As such, it also
+    has a dependency on Zend\Loader, Zend\ServiceManager, and Zend\EventManager.
   * Zend\Feed\Writer
   * Zend\Tag\Cloud
 * PhlyCommon (for Entity and Filter interfaces)
+
+Installation
+----
+
+You can add this module as a git submodule to your repository. Alternately, use
+composer. To do so, add the following `composer.json` configuration in your
+project:
+
+{{{
+{
+    "require": {
+        "phly/phly-blog": "dev-master"
+    }
+}
+}}}
+
+and then execute:
+
+{{{
+php composer.phar install
+}}}
 
 Writing Entries
 ====
