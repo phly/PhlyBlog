@@ -6,11 +6,9 @@ use DateTimezone;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\EventManager;
-use Zend\EventManager\EventsCapableInterface;
 
 class Compiler implements
-    EventManagerAwareInterface,
-    EventsCapableInterface
+    EventManagerAwareInterface
 {
     protected $events;
     protected $files;
