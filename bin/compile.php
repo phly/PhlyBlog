@@ -81,8 +81,8 @@ $view     = $locator->get('View');
 
 $view->setRequest($application->getRequest());
 $view->setResponse($application->getResponse());
-$view->events()->clearListeners('renderer');
-$view->events()->clearListeners('response');
+$view->getEventManager()->clearListeners('renderer');
+$view->getEventManager()->clearListeners('response');
 
 // Setup renderer for layout, and layout view model
 if ($config['blog']['view_callback'] && is_callable($config['blog']['view_callback'])) {
@@ -102,41 +102,41 @@ $compiler  = new Compiler($postFiles);
 
 $listeners = array();
 $tags = new Listener\Tags($view, $writer, $responseFile, $options);
-$compiler->events()->attach($tags);
+$compiler->getEventManager()->attach($tags);
 
 if ($all || $entries) {
     $entries = new Listener\Entries($view, $responseFile, $options);
-    $compiler->events()->attach($entries);
+    $compiler->getEventManager()->attach($entries);
     $listeners['entries'] = $entries;
 }
 
 if ($all || $archive) {
     $archive = new Listener\Archives($view, $writer, $responseFile, $options);
-    $compiler->events()->attach($archive);
+    $compiler->getEventManager()->attach($archive);
     $listeners['archives'] = $archive;
 }
 
 if ($all || $byYear) {
     $byYear = new Listener\ByYear($view, $writer, $responseFile, $options);
-    $compiler->events()->attach($byYear);
+    $compiler->getEventManager()->attach($byYear);
     $listeners['entries by year'] = $byYear;
 }
 
 if ($all || $byMonth) {
     $byMonth = new Listener\ByMonth($view, $writer, $responseFile, $options);
-    $compiler->events()->attach($byMonth);
+    $compiler->getEventManager()->attach($byMonth);
     $listeners['entries by month'] = $byMonth;
 }
 
 if ($all || $byDay) {
     $byDay = new Listener\ByDate($view, $writer, $responseFile, $options);
-    $compiler->events()->attach($byDay);
+    $compiler->getEventManager()->attach($byDay);
     $listeners['entries by day'] = $byDay;
 }
 
 if ($all || $byAuthor) {
     $byAuthor = new Listener\Authors($view, $writer, $responseFile, $options);
-    $compiler->events()->attach($byAuthor);
+    $compiler->getEventManager()->attach($byAuthor);
     $listeners['entries by author'] = $byAuthor;
 }
 
