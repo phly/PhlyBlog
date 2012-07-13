@@ -1,8 +1,8 @@
 <?php
 namespace PhlyBlog\Compiler;
 
-use SplPriorityQueue,
-    PhlyBlog\EntryEntity;
+use SplPriorityQueue;
+use PhlyBlog\EntryEntity;
 
 class SortedEntries extends SplPriorityQueue
 {

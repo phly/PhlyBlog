@@ -11,11 +11,11 @@ class ByDateTest extends TestCase
     {
         TestHelper::injectScaffolds($this);
         $this->byDate = new ByDate($this->view, $this->writer, $this->file, $this->options);
-        $this->compiler->events()->attach($this->byDate);
+        $this->compiler->getEventManager()->attach($this->byDate);
 
         $this->dates = array();
         $self = $this;
-        $this->compiler->events()->attach('compile', function($e) use ($self) {
+        $this->compiler->getEventManager()->attach('compile', function($e) use ($self) {
             $entry = $e->getEntry();
             if ($entry->isDraft() || !$entry->isPublic()) {
                 return;

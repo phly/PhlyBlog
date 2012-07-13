@@ -8,7 +8,7 @@ class Tags extends AbstractValidator
     const INVALID_TAG  = 'tagInvalid';
     const INVALID_TAGS = 'tagsInvalid';
 
-    protected $_messageTemplates = array(
+    protected $messageTemplates = array(
         self::INVALID_TAG  => 'Invalid tag provided; expected a string, received "%value%".',
         self::INVALID_TAGS => 'Invalid tags provided; expected an array or string, received "%value%".',
     );

@@ -9,7 +9,7 @@ class ByYearTest extends TestCase
     {
         TestHelper::injectScaffolds($this);
         $this->byYear = new ByYear($this->view, $this->writer, $this->file, $this->options);
-        $this->compiler->events()->attach($this->byYear);
+        $this->compiler->getEventManager()->attach($this->byYear);
     }
 
     public function testCreatesNoFilesPriorToCompilation()

@@ -9,7 +9,7 @@ class ArchivesTest extends TestCase
     {
         TestHelper::injectScaffolds($this);
         $this->archives = new Archives($this->view, $this->writer, $this->file, $this->options);
-        $this->compiler->events()->attach($this->archives);
+        $this->compiler->getEventManager()->attach($this->archives);
     }
 
     public function testCreatesNoFilesPriorToCompilation()

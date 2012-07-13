@@ -1,8 +1,8 @@
 <?php
 namespace PhlyBlog;
 
-use PhlyCommon\Entity as EntityDefinition,
-    Zend\InputFilter\InputFilterInterface;
+use PhlyCommon\Entity as EntityDefinition;
+use Zend\InputFilter\InputFilterInterface;
 
 class AuthorEntity implements EntityDefinition
 {

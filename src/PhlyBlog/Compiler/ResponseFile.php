@@ -15,4 +15,3 @@ class ResponseFile
         return $this->filename;
     }
 }
-

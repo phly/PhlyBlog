@@ -18,7 +18,7 @@ class ResponseStrategyTest extends TestCase
 
     public function testAddsResponseStrategyToView()
     {
-        $events = $this->view->events();
+        $events = $this->view->getEventManager();
         $listeners = $events->getListeners('response');
         $found = false;
         foreach ($listeners as $listener) {

@@ -9,7 +9,7 @@ class TagsTest extends TestCase
     {
         TestHelper::injectScaffolds($this);
         $this->tags = new Tags($this->view, $this->writer, $this->file, $this->options);
-        $this->compiler->events()->attach($this->tags);
+        $this->compiler->getEventManager()->attach($this->tags);
     }
 
     public function testCreatesNoFilesPriorToCompilation()

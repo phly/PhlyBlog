@@ -6,11 +6,8 @@ use DateTimezone;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\EventManager;
-use Zend\EventManager\EventsCapableInterface;
 
-class Compiler implements
-    EventManagerAwareInterface,
-    EventsCapableInterface
+class Compiler implements EventManagerAwareInterface
 {
     protected $events;
     protected $files;
@@ -30,7 +27,7 @@ class Compiler implements
         return $this;
     }
 
-    public function events()
+    public function getEventManager()
     {
         if (!$this->events) {
             $this->setEventManager(new EventManager());
@@ -80,11 +77,11 @@ class Compiler implements
 
             $event->setEntry($entry);
             $event->setDate($date);
-            $this->events()->trigger('compile', $event);
+            $this->getEventManager()->trigger('compile', $event);
         }
 
         $event = new Compiler\Event();
         $event->setTarget($this);
-        $this->events()->trigger('compile.end', $event);
+        $this->getEventManager()->trigger('compile.end', $event);
     }
 }

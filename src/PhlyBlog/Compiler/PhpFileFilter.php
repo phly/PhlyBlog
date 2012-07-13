@@ -1,14 +1,14 @@
 <?php
 namespace PhlyBlog\Compiler;
 
-use DirectoryIterator,
-    FilterIterator,
-    InvalidArgumentException,
-    Iterator,
-    RecursiveDirectoryIterator,
-    RecursiveIterator,
-    RecursiveIteratorIterator,
-    SplFileInfo;
+use DirectoryIterator;
+use FilterIterator;
+use InvalidArgumentException;
+use Iterator;
+use RecursiveDirectoryIterator;
+use RecursiveIterator;
+use RecursiveIteratorIterator;
+use SplFileInfo;
 
 /**
  * Usage:

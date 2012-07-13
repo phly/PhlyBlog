@@ -66,4 +66,3 @@ class ByDate extends AbstractList
         }
     }
 }
-

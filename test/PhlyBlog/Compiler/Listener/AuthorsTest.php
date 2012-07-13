@@ -9,7 +9,7 @@ class AuthorsTest extends TestCase
     {
         TestHelper::injectScaffolds($this);
         $this->authors = new Authors($this->view, $this->writer, $this->file, $this->options);
-        $this->compiler->events()->attach($this->authors);
+        $this->compiler->getEventManager()->attach($this->authors);
     }
 
     public function testCreatesNoFilesPriorToCompilation()

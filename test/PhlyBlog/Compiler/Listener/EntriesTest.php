@@ -9,7 +9,7 @@ class EntriesTest extends TestCase
     {
         TestHelper::injectScaffolds($this);
         $this->entries = new Entries($this->view, $this->file, $this->options);
-        $this->compiler->events()->attach($this->entries);
+        $this->compiler->getEventManager()->attach($this->entries);
     }
 
     public function testCreatesNoFilesPriorToCompilation()

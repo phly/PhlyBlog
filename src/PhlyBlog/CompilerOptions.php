@@ -1,10 +1,10 @@
 <?php
 namespace PhlyBlog;
 
-use Zend\Stdlib\Options,
-    Zend\Uri\UriFactory;
+use Zend\Stdlib\AbstractOptions;
+use Zend\Uri\UriFactory;
 
-class CompilerOptions extends Options
+class CompilerOptions extends AbstractOptions
 {
     protected $entryTemplate;
 

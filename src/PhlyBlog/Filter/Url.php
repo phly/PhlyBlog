@@ -9,7 +9,7 @@ class Url extends AbstractValidator
 {
     const INVALID_URL  = 'urlInvalid';
 
-    protected $_messageTemplates = array(
+    protected $messageTemplates = array(
         self::INVALID_URL  => 'Invalid url provided; received "%value%".',
     );
 

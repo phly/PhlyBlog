@@ -11,7 +11,7 @@ class AuthorIsValid extends AbstractValidator
     const INVALID_NAME_TOO_SHORT = 'authorNameTooShort';
     const INVALID_TYPE           = 'authorTypeInvalid';
 
-    protected $_messageTemplates = array(
+    protected $messageTemplates = array(
         self::INVALID_AUTHOR         => 'Invalid author provided',
         self::INVALID_NAME           => 'Author name must be 1 alphabetic character followed by 0 or more alphanumeric, dash, or underscore characters',
         self::INVALID_NAME_TOO_SHORT => 'Author name must be at least 1 character',
@@ -54,4 +54,3 @@ class AuthorIsValid extends AbstractValidator
         return true;
     }
 }
-

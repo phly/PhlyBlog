@@ -26,7 +26,7 @@ class CompilerTest extends TestCase
 
         $marker = new stdClass;
         $marker->count = 0;
-        $this->compiler->events()->attach('compile', function($e) use ($marker) {
+        $this->compiler->getEventManager()->attach('compile', function($e) use ($marker) {
             $marker->count++;
         });
 
@@ -38,7 +38,7 @@ class CompilerTest extends TestCase
     public function testCompileEventPassesEntryAndDate()
     {
         $self = $this;
-        $this->compiler->events()->attach('compile', function($e) use ($self) {
+        $this->compiler->getEventManager()->attach('compile', function($e) use ($self) {
             $entry = $e->getEntry();
             $self->assertInstanceOf('PhlyBlog\EntryEntity', $entry);
 
@@ -52,7 +52,7 @@ class CompilerTest extends TestCase
     {
         $marker = new stdClass;
         $marker->count = 0;
-        $this->compiler->events()->attach('compile.end', function($e) use ($marker) {
+        $this->compiler->getEventManager()->attach('compile.end', function($e) use ($marker) {
             $marker->count++;
         });
 
@@ -63,7 +63,7 @@ class CompilerTest extends TestCase
     public function testCompileEndEventReceivesEmptyEntryAndDate()
     {
         $self = $this;
-        $this->compiler->events()->attach('compile.end', function($e) use ($self) {
+        $this->compiler->getEventManager()->attach('compile.end', function($e) use ($self) {
             $entry = $e->getEntry();
             $date  = $e->getDate();
             $self->assertNull($entry);

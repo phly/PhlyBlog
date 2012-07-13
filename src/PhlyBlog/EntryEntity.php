@@ -1,9 +1,9 @@
 <?php
 namespace PhlyBlog;
 
-use PhlyCommon\Entity as EntityDefinition,
-    PhlyCommon\Filter\Timestamp as TimestampFilter,
-    Zend\InputFilter\InputFilterInterface;
+use PhlyCommon\Entity as EntityDefinition;
+use PhlyCommon\Filter\Timestamp as TimestampFilter;
+use Zend\InputFilter\InputFilterInterface;
 
 class EntryEntity implements EntityDefinition
 {

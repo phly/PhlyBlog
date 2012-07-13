@@ -1,8 +1,8 @@
 <?php
 namespace PhlyBlog\Filter;
 
-use PhlyCommon\Filter\Timezone as TimezoneValidator,
-    Zend\InputFilter\InputFilter;
+use PhlyCommon\Filter\Timezone as TimezoneValidator;
+use Zend\InputFilter\InputFilter;
 
 class EntryFilter extends InputFilter
 {
