@@ -175,7 +175,7 @@ abstract class AbstractList implements ListenerAggregateInterface, ListenerInter
             $entry->addAuthor($authorDetails);
             $entry->setDateModified($post->getUpdated());
             $entry->setDateCreated($post->getCreated());
-            $entry->setContent($post->getBody());
+            $entry->setContent($post->getBody() . $post->getExtended());
 
             $feed->addEntry($entry);
         }
