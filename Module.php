@@ -3,9 +3,11 @@
 namespace PhlyBlog;
 
 use Traversable;
+use Zend\Console\Adapter\AdapterInterface as Console;
+use Zend\ModuleManager\Feature\ConsoleUsageProviderInterface;
 use Zend\Stdlib\ArrayUtils;
 
-class Module
+class Module implements ConsoleUsageProviderInterface
 {
     public static $config;
 
@@ -21,6 +23,22 @@ class Module
     public function getConfig()
     {
         return include __DIR__ . '/config/module.config.php';
+    }
+
+    public function getConsoleUsage(Console $console)
+    {
+        return array(
+            'compile [--all|-a] [--entries|-e] [--archive|-c] [--year|-y] [--month|-m] [--day|-d] [--tag|-t] [--author|-r]' => 'Compile blog:
+    --all|-a: Execute all actions (default)
+    --entries|-e: Compile entries
+    --archive|-c: Compile paginated archive (and feed)
+    --year|-y: Compile paginated entries by year
+    --month|-m: Compile paginated entries by month
+    --day|-d: Compile paginated entries by day
+    --tag|-t: Compile paginated entries by tag (and feeds)
+    --author|-r: Compile paginated entries by author (and feeds)
+',
+        );
     }
 
     public function onBootstrap($e)
