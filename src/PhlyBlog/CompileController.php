@@ -2,6 +2,7 @@
 namespace PhlyBlog;
 
 use RuntimeException;
+use Zend\EventManager\EventManagerInterface;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Stdlib\ArrayUtils;
 use Zend\View\View;
