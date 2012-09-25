@@ -28,7 +28,7 @@ class Module implements ConsoleUsageProviderInterface
     public function getConsoleUsage(Console $console)
     {
         return array(
-            'compile [--all|-a] [--entries|-e] [--archive|-c] [--year|-y] [--month|-m] [--day|-d] [--tag|-t] [--author|-r]' => 'Compile blog:
+            'blog compile [--all|-a] [--entries|-e] [--archive|-c] [--year|-y] [--month|-m] [--day|-d] [--tag|-t] [--author|-r]' => 'Compile blog:
     --all|-a: Execute all actions (default)
     --entries|-e: Compile entries
     --archive|-c: Compile paginated archive (and feed)
