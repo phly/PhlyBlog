@@ -9,6 +9,7 @@ use Zend\Http\PhpEnvironment\Response;
 use Zend\ModuleManager\Feature\ConsoleUsageProviderInterface;
 use Zend\Stdlib\ArrayUtils;
 use Zend\View\Renderer\PhpRenderer;
+use Zend\View\Model;
 use Zend\View\View;
 
 class Module implements ConsoleUsageProviderInterface
