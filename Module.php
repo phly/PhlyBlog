@@ -81,6 +81,7 @@ class Module implements ConsoleUsageProviderInterface
 
                 $controller = new CompileController();
                 $controller->setConfig($config);
+                $controller->setConsole($services->get('Console'));
                 $controller->setView($view);
                 return $controller;
             },

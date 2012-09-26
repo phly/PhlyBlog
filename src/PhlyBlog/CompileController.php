@@ -2,6 +2,9 @@
 namespace PhlyBlog;
 
 use RuntimeException;
+use Zend\Console\Adapter\AdapterInterface as Console;
+use Zend\Console\ColorInterface as Color;
+use Zend\Console\Request as ConsoleRequest;
 use Zend\EventManager\EventManagerInterface;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\View;
@@ -13,6 +16,7 @@ class CompileController extends AbstractActionController
 
     protected $compiler;
     protected $compilerOptions;
+    protected $console;
     protected $responseFile;
     protected $writer;
 
@@ -39,6 +43,11 @@ class CompileController extends AbstractActionController
             ));
         }
         $this->config = $config;
+    }
+
+    public function setConsole(Console $console)
+    {
+        $this->console = $console;
     }
 
     public function setEventManager(EventManagerInterface $events)
@@ -205,32 +214,52 @@ class CompileController extends AbstractActionController
 
     public function compileAction()
     {
+        $request = $this->getRequest();
+        if (!$request instanceof ConsoleRequest) {
+            throw new RuntimeException(sprintf(
+                '%s may only be called from the console',
+                __METHOD__
+            ));
+        }
+
         $flags     = $this->getFlags();
         $compiler  = $this->getCompiler();
         $tags      = $this->attachTags();
         $listeners = $this->attachListeners($flags, $tags);
 
         // Compile
-        echo "Compiling and sorting entries...";
+        $width = $this->console->getWidth();
+        $this->console->write("Compiling and sorting entries", Color::BLUE);
         $compiler->compile();
-        echo "DONE!\n";
+        $this->reportDone($width, 29);
 
         // Create tag cloud
         if ($this->config['cloud_callback'] 
             && is_callable($this->config['cloud_callback'])
         ) {
             $callable = $this->config['cloud_callback'];
-            echo "Creating and rendering tag cloud...";
+            $this->console->write("Creating and rendering tag cloud", Color::BLUE);
             $cloud = $tags->getTagCloud();
             call_user_func($callable, $cloud, $this->view, $this->config, $this->getServiceLocator());
-            echo "DONE!\n";
+            $this->reportDone($width, 32);
         }
 
         // compile various artifacts
         foreach ($listeners as $type => $listener) {
-            echo "Compiling " . $type . "...";
+            $message = "Compiling " . $type;
+            $this->console->write($message, Color::BLUE);
             $listener->compile();
-            echo "DONE!\n";
+            $this->reportDone($width, strlen($message));
         }
+    }
+
+    protected function reportDone($width, $used)
+    {
+        if (($used + 8) > $width) {
+            $this->console->writeLine('');
+            $used = 0;
+        }
+        $spaces = $width - $used - 8;
+        $this->console->writeLine(str_repeat('.', $spaces) . '[ DONE ]', Color::GREEN);
     }
 }
