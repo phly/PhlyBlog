@@ -4,16 +4,16 @@ namespace PhlyBlog;
 use RuntimeException;
 use Zend\EventManager\EventManagerInterface;
 use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Stdlib\ArrayUtils;
 use Zend\View\View;
 
 class CompileController extends AbstractActionController
 {
     public $config = array();
+    public $view;
 
+    protected $compiler;
     protected $compilerOptions;
     protected $responseFile;
-    protected $view;
     protected $writer;
 
     protected $defaultOptions = array(
@@ -49,7 +49,7 @@ class CompileController extends AbstractActionController
             $config     = $controller->config;
             if ($config['view_callback'] && is_callable($config['view_callback'])) {
                 $callable = $config['view_callback'];
-                $view     = $controller->getView();
+                $view     = $controller->view;
                 $locator  = $controller->getServiceLocator();
                 call_user_func($callable, $view, $config, $locator);
             }
@@ -58,30 +58,46 @@ class CompileController extends AbstractActionController
 
     public function getFlags()
     {
-        $options = $this->params();
+        $options = $this->params()->fromRoute();
+        $test = array(
+            array('long' => 'all',     'short' => 'a'),
+            array('long' => 'entries', 'short' => 'e'),
+            array('long' => 'archive', 'short' => 'c'),
+            array('long' => 'year',    'short' => 'y'),
+            array('long' => 'month',   'short' => 'm'),
+            array('long' => 'day',     'short' => 'd'),
+            array('long' => 'tag',     'short' => 't'),
+            array('long' => 'author',  'short' => 'r'),
+        );
+        foreach ($test as $spec) {
+            $long  = $spec['long'];
+            $short = $spec['short'];
+            if ((!isset($options[$long]) || !$options[$long]) 
+                && (isset($options[$short]) && $options[$short])
+            ) {
+                $options[$long] = true;
+                unset($options[$short]);
+            }
+        }
+
         $options = array_merge($this->defaultOptions, $options);
-        if ($options['entries'] 
-            || $options['archive'] 
-            || $options['year'] 
-            || $options['month'] 
-            || $options['day'] 
-            || $options['tag'] 
+        if ($options['entries']
+            || $options['archive']
+            || $options['year']
+            || $options['month']
+            || $options['day']
+            || $options['tag']
             || $options['author']
         ) {
             $options['all'] = false;
         }
+
         return $options;
     }
 
-    public function getView()
+    public function setView(View $view)
     {
-        if ($this->view) {
-            return $this->view;
-        }
-        $this->view = $view = new View();
-        $view->setRequest($this->getRequest);
-        $view->setResponse($this->getResponse);
-        return $view;
+        $this->view = $view;
     }
 
     public function getWriter()
@@ -104,12 +120,12 @@ class CompileController extends AbstractActionController
 
     public function getCompilerOptions()
     {
-        if ($this->options) {
-            return $this->options;
+        if ($this->compilerOptions) {
+            return $this->compilerOptions;
         }
 
-        $this->options = new CompilerOptions($this->config['options']);
-        return $this->options;
+        $this->compilerOptions = new CompilerOptions($this->config['options']);
+        return $this->compilerOptions;
     }
 
     public function getCompiler()
@@ -118,11 +134,11 @@ class CompileController extends AbstractActionController
             return $this->compiler;
         }
 
-        $view             = $this->getView();
+        $view             = $this->view;
         $writer           = $this->getWriter();
         $responseFile     = $this->getResponseFile();
         $responseStrategy = new Compiler\ResponseStrategy($writer, $responseFile, $view);
-        $postFiles        = new Compiler\PhpFileFilter($config['posts_path']);
+        $postFiles        = new Compiler\PhpFileFilter($this->config['posts_path']);
 
         $this->compiler   = new Compiler($postFiles);
         return $this->compiler;
@@ -130,15 +146,15 @@ class CompileController extends AbstractActionController
 
     public function attachTags()
     {
-        $tags = new Compiler\Listener\Tags($this->getView(), $this->getWriter(), $this->getResponseFile(), $this->getCompilerOptions());
+        $tags = new Compiler\Listener\Tags($this->view, $this->getWriter(), $this->getResponseFile(), $this->getCompilerOptions());
         $this->getCompiler()->getEventManager()->attach($tags);
         return $tags;
     }
 
-    public function attachListeners(array $flags)
+    public function attachListeners(array $flags, $tags)
     {
         $listeners    = array();
-        $view         = $this->getView();
+        $view         = $this->view;
         $compiler     = $this->getCompiler();
         $writer       = $this->getWriter();
         $responseFile = $this->getResponseFile();
@@ -192,7 +208,7 @@ class CompileController extends AbstractActionController
         $flags     = $this->getFlags();
         $compiler  = $this->getCompiler();
         $tags      = $this->attachTags();
-        $listeners = $this->attachListeners($flags);
+        $listeners = $this->attachListeners($flags, $tags);
 
         // Compile
         echo "Compiling and sorting entries...";
@@ -206,7 +222,7 @@ class CompileController extends AbstractActionController
             $callable = $this->config['cloud_callback'];
             echo "Creating and rendering tag cloud...";
             $cloud = $tags->getTagCloud();
-            call_user_func($callable, $cloud, $this->getView(), $this->config, $this->getServiceLocator());
+            call_user_func($callable, $cloud, $this->view, $this->config, $this->getServiceLocator());
             echo "DONE!\n";
         }
 

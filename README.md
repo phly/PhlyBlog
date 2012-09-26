@@ -67,8 +67,15 @@ Important things to note:
 Usage
 =====
 
-A script, `bin/compile.php`, is shipped for your convenience, and it will
-generate the following artifacts:
+This module is ZF2 Console-aware. Once installed and active in your
+application, you should be able to run:
+
+```bash
+% php public/index.php
+```
+
+and see usage for the module. Currently, it defines a "blog compile" action
+that can generate the following artifacts:
 
 * A file per entry
 * Paginated entry files
@@ -79,18 +86,6 @@ generate the following artifacts:
 * Atom and/or RSS feeds for recent entries
 * Atom and/or RSS feeds for recent entries by tag
 * Optionally, a tag cloud
-
-The script, makes the following assumptions:
-
-* They are being called by another script that:
-  * sets up one or more autoloaders, including functionality to autoload the
-    code in this library
-  * compiles and merges all application configuration
-  * bootstraps the application
-  * retains the Application instance in the current scope
-
-Basically, a script that does normal bootstrapping, but without calling `run()`
-or `send()` on the Application instance.
 
 You will want to setup local configuration; I recommend putting it in
 `config/autoload/module.blog.config.global.php`. As a sample:
@@ -203,8 +198,8 @@ You will want to setup local configuration; I recommend putting it in
         )),
     ));
 
-When you run the script, it will generate files in the locations you specify in
-your configuration.
+When you run the command line tool, it will generate files in the locations you
+specify in your configuration.
 
 License
 ----
