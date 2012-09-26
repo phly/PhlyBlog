@@ -188,4 +188,19 @@ return array(
             ),
         ),
     ),
+
+    'console' => array(
+        'router' => array('routes' => array(
+            'phly-blog-compile' => array(
+                'type'    => 'Simple',
+                'options' => array(
+                    'route' => 'blog compile [--all|-a] [--entries|-e] [--archive|-c] [--year|-y] [--month|-m] [--day|-d] [--tag|-t] [--author|-r]',
+                    'defaults' => array(
+                        'controller' => 'PhlyBlog\CompileController',
+                        'action'     => 'compile',
+                    ),
+                ),
+            ),
+        )),
+    ),
 );

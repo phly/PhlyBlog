@@ -7,6 +7,7 @@ return array(
     'PhlyBlog\Filter\Url'                          => __DIR__ . '/src/PhlyBlog/Filter/Url.php',
     'PhlyBlog\Filter\Tags'                         => __DIR__ . '/src/PhlyBlog/Filter/Tags.php',
     'PhlyBlog\Filter\Permalink'                    => __DIR__ . '/src/PhlyBlog/Filter/Permalink.php',
+    'PhlyBlog\CompileController'                   => __DIR__ . '/src/PhlyBlog/CompileController.php',
     'PhlyBlog\Compiler\ResponseFile'               => __DIR__ . '/src/PhlyBlog/Compiler/ResponseFile.php',
     'PhlyBlog\Compiler\FileWriter'                 => __DIR__ . '/src/PhlyBlog/Compiler/FileWriter.php',
     'PhlyBlog\Compiler\Event'                      => __DIR__ . '/src/PhlyBlog/Compiler/Event.php',
