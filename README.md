@@ -1,5 +1,5 @@
-Static Blog
-===========
+PhlyBlog: Static Blog Generator
+===============================
 
 This module is a tool for generating a static blog.
 
@@ -10,41 +10,42 @@ application, or they can be plain old HTML markup files that you serve
 directly.
 
 Requirements
-----
+------------
 
-* PHP >= 5.3.3
-* Zend Framework 2 >= 2.0.0beta4, specifically: 
-  * Zend\View\View, used to render and write generated files
-  * Zend\Mvc and Zend\ModuleManager, as this implements a module, and the
+- PHP >= 5.3.3
+- Zend Framework 2 >= 2.0.0beta4, specifically: 
+  - Zend\View\View, used to render and write generated files
+  - Zend\Mvc and Zend\ModuleManager, as this implements a module, and the
     compiler script depends on it and an Application instance. As such, it also
     has a dependency on Zend\Loader, Zend\ServiceManager, and Zend\EventManager.
-  * Zend\Feed\Writer
-  * Zend\Tag\Cloud
-* PhlyCommon (for Entity and Filter interfaces)
+  - Zend\Feed\Writer
+  - Zend\Tag\Cloud
+- PhlyCommon (for Entity and Filter interfaces)
 
 Installation
-----
+------------
 
 You can add this module as a git submodule to your repository. Alternately, use
 composer. To do so, add the following `composer.json` configuration in your
 project:
 
-{{{
+```js
 {
+    "minimum-stability": "dev",
     "require": {
         "phly/phly-blog": "dev-master"
     }
 }
-}}}
+```
 
 and then execute:
 
-{{{
+```bash
 php composer.phar install
-}}}
+```
 
 Writing Entries
-====
+---------------
 
 Find a location in your repository for entries, preferably outside your document
 root; I recommend either `data/blog/` or `posts/`.
@@ -55,13 +56,13 @@ template.
 
 Important things to note:
 
-* Set the created and/or updated timestamps. Alternately, use `DateTime` or
+- Set the created and/or updated timestamps. Alternately, use `DateTime` or
   `date()` to generate a timestamp based on a date/time string.
-* Entries marked as "drafts" (i.e., `setDraft(true)`) will not be published.
-* Entries marked as private (i.e., `setPublic(false)`) will be published, but
+- Entries marked as "drafts" (i.e., `setDraft(true)`) will not be published.
+- Entries marked as private (i.e., `setPublic(false)`) will be published, but
   will not be aggregated in paginated views or feeds. As such, you need to hand
   the URL to somebody in order for them to see it.
-* You can set an array of tags. Tags can have whitespace, which will be
+- You can set an array of tags. Tags can have whitespace, which will be
   translated to "+" characters.
 
 Usage
@@ -77,15 +78,15 @@ application, you should be able to run:
 and see usage for the module. Currently, it defines a "blog compile" action
 that can generate the following artifacts:
 
-* A file per entry
-* Paginated entry files
-* Paginated entry files by year
-* Paginated entry files by month
-* Paginated entry files by day
-* Paginated entry files by tag
-* Atom and/or RSS feeds for recent entries
-* Atom and/or RSS feeds for recent entries by tag
-* Optionally, a tag cloud
+- A file per entry
+- Paginated entry files
+- Paginated entry files by year
+- Paginated entry files by month
+- Paginated entry files by day
+- Paginated entry files by tag
+- Atom and/or RSS feeds for recent entries
+- Atom and/or RSS feeds for recent entries by tag
+- Optionally, a tag cloud
 
 You will want to setup local configuration; I recommend putting it in
 `config/autoload/module.blog.config.global.php`. As a sample:
@@ -197,12 +198,13 @@ You will want to setup local configuration; I recommend putting it in
             ),
         )),
     ));
+    ```
 
 When you run the command line tool, it will generate files in the locations you
 specify in your configuration.
 
 License
-----
+-------
 
 Copyright (c) 2012, Matthew Weier O'Phinney
 All rights reserved.
