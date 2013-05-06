@@ -89,19 +89,23 @@ class Module implements ConsoleUsageProviderInterface
         ));
     }
 
+    public function getConsoleBanner(Console $console)
+    {
+        return 'Phly Static Blog Generator';
+    }
+
     public function getConsoleUsage(Console $console)
     {
         return array(
-            'blog compile [--all|-a] [--entries|-e] [--archive|-c] [--year|-y] [--month|-m] [--day|-d] [--tag|-t] [--author|-r]' => 'Compile blog:
-    --all|-a: Execute all actions (default)
-    --entries|-e: Compile entries
-    --archive|-c: Compile paginated archive (and feed)
-    --year|-y: Compile paginated entries by year
-    --month|-m: Compile paginated entries by month
-    --day|-d: Compile paginated entries by day
-    --tag|-t: Compile paginated entries by tag (and feeds)
-    --author|-r: Compile paginated entries by author (and feeds)
-',
+            'blog compile [--all|-a] [--entries|-e] [--archive|-c] [--year|-y] [--month|-m] [--day|-d] [--tag|-t] [--author|-r]' => 'Compile blog',
+            array('--all|-a'     ,  'Execute all actions (default)'),
+            array('--entries|-e' ,  'Compile entries'),
+            array('--archive|-c' ,  'Compile paginated archive (and feed)'),
+            array('--year|-y'    ,  'Compile paginated entries by year'),
+            array('--month|-m'   ,  'Compile paginated entries by month'),
+            array('--day|-d'     ,  'Compile paginated entries by day'),
+            array('--tag|-t'     ,  'Compile paginated entries by tag (and feeds)'),
+            array('--author|-r'  ,  'Compile paginated entries by author (and feeds)'),
         );
     }
 
