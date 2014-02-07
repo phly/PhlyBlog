@@ -38,6 +38,8 @@ class EntryEntity implements EntityDefinition
     protected $comments = array();
     protected $version = 2;
 
+    private $_errorMessages = array();
+
     public static function makeStub($value)
     {
         $filter = new Filter\Permalink();
@@ -600,9 +602,16 @@ class EntryEntity implements EntityDefinition
         // If valid, push the filtered values back into the object
         if ($valid) {
             $this->fromArray($filter->getValues());
+        } else {
+            $this->_errorMessages = $filter->getMessages();
         }
 
         // Return validation result
         return $valid;
+    }
+    
+    public function getErrorMessages()
+    {
+        return $this->_errorMessages;
     }
 }
