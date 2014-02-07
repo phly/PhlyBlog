@@ -6,6 +6,7 @@ use DateTimezone;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\EventManager;
+use Zend\Console\Exception as ConsoleException;
 
 class Compiler implements EventManagerAwareInterface
 {
@@ -64,7 +65,12 @@ class Compiler implements EventManagerAwareInterface
 
             if (!$entry->isValid()) {
                 // if we have an invalid entry, we should not continue
-                continue;
+                $exception = '';
+                foreach ($entry->getErrorMessages() as $errorMsg)
+                {
+                    $exception .= "--". array_values($errorMsg)[0]."\n";
+                }
+                throw new ConsoleException\RuntimeException('Not valid post file! '."\n".$exception);
             }
 
             if ($entry->isDraft()) {
