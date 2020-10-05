@@ -6,13 +6,13 @@ use PhlyBlog\CompilerOptions;
 use PhlyBlog\Compiler\Event;
 use PhlyBlog\Compiler\ResponseFile;
 use PhlyBlog\Compiler\WriterInterface;
-use Zend\EventManager\EventManagerInterface as Events;
-use Zend\EventManager\ListenerAggregateInterface;
-use Zend\Feed\Writer\Feed as FeedWriter;
-use Zend\Paginator\Adapter\ArrayAdapter as ArrayPaginator;
-use Zend\Paginator\Paginator;
-use Zend\View\Model\ViewModel;
-use Zend\View\View;
+use Laminas\EventManager\EventManagerInterface as Events;
+use Laminas\EventManager\ListenerAggregateInterface;
+use Laminas\Feed\Writer\Feed as FeedWriter;
+use Laminas\Paginator\Adapter\ArrayAdapter as ArrayPaginator;
+use Laminas\Paginator\Paginator;
+use Laminas\View\Model\ViewModel;
+use Laminas\View\View;
 
 abstract class AbstractList implements ListenerAggregateInterface, ListenerInterface
 {

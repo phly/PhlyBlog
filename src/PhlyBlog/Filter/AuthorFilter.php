@@ -1,7 +1,7 @@
 <?php
 namespace PhlyBlog\Filter;
 
-use Zend\InputFilter\InputFilter;
+use Laminas\InputFilter\InputFilter;
 
 class AuthorFilter extends InputFilter
 {

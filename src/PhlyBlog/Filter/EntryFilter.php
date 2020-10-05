@@ -2,7 +2,7 @@
 namespace PhlyBlog\Filter;
 
 use PhlyCommon\Filter\Timezone as TimezoneValidator;
-use Zend\InputFilter\InputFilter;
+use Laminas\InputFilter\InputFilter;
 
 class EntryFilter extends InputFilter
 {

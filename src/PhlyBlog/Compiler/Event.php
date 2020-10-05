@@ -3,7 +3,7 @@ namespace PhlyBlog\Compiler;
 
 use DateTime;
 use PhlyBlog\EntryEntity as Entry;
-use Zend\EventManager\Event as BaseEvent;
+use Laminas\EventManager\Event as BaseEvent;
 
 class Event extends BaseEvent
 {

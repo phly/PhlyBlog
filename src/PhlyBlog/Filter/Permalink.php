@@ -2,7 +2,7 @@
 
 namespace PhlyBlog\Filter;
 
-use Zend\Filter\FilterInterface;
+use Laminas\Filter\FilterInterface;
 
 class Permalink implements FilterInterface
 {

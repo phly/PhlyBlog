@@ -60,7 +60,7 @@ class TagsTest extends TestCase
     {
         $this->compiler->compile();
         $cloud = $this->tags->getTagCloud();
-        $this->assertInstanceOf('Zend\Tag\Cloud', $cloud);
+        $this->assertInstanceOf('Laminas\Tag\Cloud', $cloud);
         $markup = $cloud->render();
         foreach ($this->expected['tags'] as $tag) {
             $this->assertContains($tag, $markup);

@@ -2,8 +2,8 @@
 namespace PhlyBlog\Compiler;
 
 use PHPUnit_Framework_TestCase as TestCase;
-use Zend\Mvc\MvcEvent;
-use Zend\View\View;
+use Laminas\Mvc\MvcEvent;
+use Laminas\View\View;
 
 class ResponseStrategyTest extends TestCase
 {

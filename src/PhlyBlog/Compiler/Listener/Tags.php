@@ -5,7 +5,7 @@ use InvalidArgumentException;
 use DomainException;
 use PhlyBlog\Compiler\Event;
 use PhlyBlog\Compiler\SortedEntries;
-use Zend\Tag\Cloud as TagCloud;
+use Laminas\Tag\Cloud as TagCloud;
 
 class Tags extends AbstractList
 {

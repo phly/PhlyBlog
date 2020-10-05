@@ -5,10 +5,10 @@ use DomainException;
 use PhlyBlog\CompilerOptions;
 use PhlyBlog\Compiler\Event;
 use PhlyBlog\Compiler\ResponseFile;
-use Zend\EventManager\EventManagerInterface as Events;
-use Zend\EventManager\ListenerAggregateInterface;
-use Zend\View\View;
-use Zend\View\Model\ViewModel;
+use Laminas\EventManager\EventManagerInterface as Events;
+use Laminas\EventManager\ListenerAggregateInterface;
+use Laminas\View\View;
+use Laminas\View\Model\ViewModel;
 
 class Entries implements ListenerAggregateInterface
 {

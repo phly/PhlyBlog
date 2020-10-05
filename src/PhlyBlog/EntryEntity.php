@@ -3,7 +3,7 @@ namespace PhlyBlog;
 
 use PhlyCommon\Entity as EntityDefinition;
 use PhlyCommon\Filter\Timestamp as TimestampFilter;
-use Zend\InputFilter\InputFilterInterface;
+use Laminas\InputFilter\InputFilterInterface;
 
 class EntryEntity implements EntityDefinition
 {

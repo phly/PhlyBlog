@@ -5,10 +5,10 @@ use PHPUnit_Framework_TestCase as TestCase;
 use PhlyBlog\Compiler;
 use PhlyBlog\CompilerOptions;
 use PhlyBlog\Compiler\TestAsset;
-use Zend\Mvc\Router\Http\TreeRouteStack;
-use Zend\View\View;
-use Zend\View\Renderer;
-use Zend\View\Resolver;
+use Laminas\Mvc\Router\Http\TreeRouteStack;
+use Laminas\View\View;
+use Laminas\View\Renderer;
+use Laminas\View\Resolver;
 
 class TestHelper
 {

@@ -1,8 +1,8 @@
 <?php
 namespace PhlyBlog;
 
-use Zend\Stdlib\AbstractOptions;
-use Zend\Uri\UriFactory;
+use Laminas\Stdlib\AbstractOptions;
+use Laminas\Uri\UriFactory;
 
 class CompilerOptions extends AbstractOptions
 {

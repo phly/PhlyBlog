@@ -2,7 +2,7 @@
 namespace PhlyBlog\Filter;
 
 use PhlyBlog\AuthorEntity;
-use Zend\Validator\AbstractValidator;
+use Laminas\Validator\AbstractValidator;
 
 class AuthorIsValid extends AbstractValidator
 {

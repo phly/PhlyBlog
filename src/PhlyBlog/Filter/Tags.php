@@ -1,7 +1,7 @@
 <?php
 namespace PhlyBlog\Filter;
 
-use Zend\Validator\AbstractValidator;
+use Laminas\Validator\AbstractValidator;
 
 class Tags extends AbstractValidator
 {

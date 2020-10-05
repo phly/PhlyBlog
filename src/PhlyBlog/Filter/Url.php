@@ -1,9 +1,9 @@
 <?php
 namespace PhlyBlog\Filter;
 
-use Zend\Uri\Uri;
-use Zend\Uri\UriFactory;
-use Zend\Validator\AbstractValidator;
+use Laminas\Uri\Uri;
+use Laminas\Uri\UriFactory;
+use Laminas\Validator\AbstractValidator;
 
 class Url extends AbstractValidator
 {

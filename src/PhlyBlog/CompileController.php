@@ -2,12 +2,12 @@
 namespace PhlyBlog;
 
 use RuntimeException;
-use Zend\Console\Adapter\AdapterInterface as Console;
-use Zend\Console\ColorInterface as Color;
-use Zend\Console\Request as ConsoleRequest;
-use Zend\EventManager\EventManagerInterface;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\View;
+use Laminas\Console\Adapter\AdapterInterface as Console;
+use Laminas\Console\ColorInterface as Color;
+use Laminas\Console\Request as ConsoleRequest;
+use Laminas\EventManager\EventManagerInterface;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\View;
 
 class CompileController extends AbstractActionController
 {

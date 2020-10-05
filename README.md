@@ -14,12 +14,12 @@ Requirements
 
 - PHP >= 5.3.3
 - Zend Framework 2 >= 2.0.0beta4, specifically: 
-  - Zend\View\View, used to render and write generated files
-  - Zend\Mvc and Zend\ModuleManager, as this implements a module, and the
+  - Laminas\View\View, used to render and write generated files
+  - Laminas\Mvc and Laminas\ModuleManager, as this implements a module, and the
     compiler script depends on it and an Application instance. As such, it also
-    has a dependency on Zend\Loader, Zend\ServiceManager, and Zend\EventManager.
-  - Zend\Feed\Writer
-  - Zend\Tag\Cloud
+    has a dependency on Laminas\Loader, Laminas\ServiceManager, and Laminas\EventManager.
+  - Laminas\Feed\Writer
+  - Laminas\Tag\Cloud
 - PhlyCommon (for Entity and Filter interfaces)
 
 Installation
@@ -146,7 +146,7 @@ You will want to setup local configuration; I recommend putting it in
             'tag_feed_title_template'    => 'Tag: %s :: Your Blog Name',
 
             // If generating a tag cloud, you can specify options for
-            // Zend\Tag\Cloud. The following sets up percentage sizing from
+            // Laminas\Tag\Cloud. The following sets up percentage sizing from
             // 80-300%
             'tag_cloud_options'          => array('tagDecorator' => array(
                 'decorator' => 'html_tag',
@@ -172,7 +172,7 @@ You will want to setup local configuration; I recommend putting it in
         // Tag cloud generation is possible, but you likely need to capture
         // the rendered cloud to inject elsewhere. You can do this with a
         // callback.
-        // The callback will receive a Zend\Tag\Cloud instance, the View
+        // The callback will receive a Laminas\Tag\Cloud instance, the View
         // instance, application configuration // (as an array), and the
         // application's Locator instance.
         'cloud_callback' => array('Application\Module', 'handleTagCloud'),
@@ -182,7 +182,7 @@ You will want to setup local configuration; I recommend putting it in
         // creating your own in your own module, and make sure you alter the
         // resolvers so that they point to the override locations. Below, I'm
         // putting my overrides in my Application module.
-        'Zend\View\Resolver\TemplateMapResolver' => array('parameters' => array(
+        'Laminas\View\Resolver\TemplateMapResolver' => array('parameters' => array(
             'map' => array(
                 'phly-blog/entry-short'  => 'module/Application/view/phly-blog/entry-short.phtml',
                 'phly-blog/entry'        => 'module/Application/view/phly-blog/entry.phtml',
@@ -192,7 +192,7 @@ You will want to setup local configuration; I recommend putting it in
             ),
         )),
 
-        'Zend\View\Resolver\TemplatePathStack' => array('parameters' => array(
+        'Laminas\View\Resolver\TemplatePathStack' => array('parameters' => array(
             'paths' => array(
                 'phly-blog' => 'module/Application/view',
             ),
