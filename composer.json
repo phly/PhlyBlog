@@ -22,11 +22,8 @@
         "phly/phly-common": "dev-master"
     },
     "autoload": {
-        "psr-0": {
-            "PhlyBlog": "src/"
-        },
-        "classmap": [
-            "./"
-        ]
+        "psr-4": {
+            "PhlyBlog\\": "src/"
+        }
     }
 }
