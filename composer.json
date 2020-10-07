@@ -17,7 +17,7 @@
         }
     ],
     "require": {
-        "php": ">=5.3.3",
+        "php": ">=7.0",
         "zendframework/zendframework": "2.*",
         "phly/phly-common": "dev-master"
     },
