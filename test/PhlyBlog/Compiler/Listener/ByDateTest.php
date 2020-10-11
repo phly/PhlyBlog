@@ -27,7 +27,7 @@ class ByDateTest extends TestCase
             $this->file,
             $this->options
         );
-        $this->compiler->getEventManager()->attach($this->byDate);
+        $this->byDate->attach($this->compiler->getEventManager());
 
         $this->dates = [];
         $self        = $this;

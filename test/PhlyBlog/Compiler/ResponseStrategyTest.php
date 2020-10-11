@@ -2,12 +2,16 @@
 
 namespace PhlyBlogTest\Compiler;
 
+use Laminas\EventManager\EventManagerInterface;
 use Laminas\Mvc\MvcEvent;
 use Laminas\View\View;
 use PhlyBlog\Compiler\ResponseFile;
 use PhlyBlog\Compiler\ResponseStrategy;
 use PhlyBlogTest\Compiler\TestAsset\MockWriter;
 use PHPUnit\Framework\TestCase;
+use ReflectionObject;
+
+use function reset;
 
 class ResponseStrategyTest extends TestCase
 {
@@ -36,11 +40,10 @@ class ResponseStrategyTest extends TestCase
     public function testAddsResponseStrategyToView(): void
     {
         $events    = $this->view->getEventManager();
-        $listeners = $events->getListeners('response');
+        $listeners = $this->getResponseListeners($events);
         $found     = false;
         foreach ($listeners as $listener) {
-            $callback = $listener->getCallback();
-            if ([$this->strategy, 'onResponse'] == $callback) {
+            if ([$this->strategy, 'onResponse'] == $listener) {
                 $found = true;
                 break;
             }
@@ -76,5 +79,18 @@ class ResponseStrategyTest extends TestCase
         $this->strategy->onResponse($event);
         self::assertArrayHasKey('tag.html', $this->writer->files);
         self::assertEquals('data', $this->writer->files['tag.html']);
+    }
+
+    private function getResponseListeners(EventManagerInterface $events)
+    {
+        $reflectionObject   = new ReflectionObject($events);
+        $reflectionProperty = $reflectionObject->getProperty('events');
+        $reflectionProperty->setAccessible(true);
+        $value = $reflectionProperty->getValue($events);
+        $reflectionProperty->setAccessible(false);
+        $listeners = $value['response'];
+        $listeners = reset($listeners); // unwrap priorities
+        $listeners = reset($listeners); // unwrap callables
+        return $listeners;
     }
 }

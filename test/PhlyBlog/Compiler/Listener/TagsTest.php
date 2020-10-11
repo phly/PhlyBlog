@@ -25,7 +25,7 @@ class TagsTest extends TestCase
             $this->file,
             $this->options
         );
-        $this->compiler->getEventManager()->attach($this->tags);
+        $this->tags->attach($this->compiler->getEventManager());
     }
 
     public function testCreatesNoFilesPriorToCompilation(): void

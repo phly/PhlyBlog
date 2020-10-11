@@ -24,7 +24,7 @@ class AuthorsTest extends TestCase
             $this->file,
             $this->options
         );
-        $this->compiler->getEventManager()->attach($this->authors);
+        $this->authors->attach($this->compiler->getEventManager());
     }
 
     public function testCreatesNoFilesPriorToCompilation(): void

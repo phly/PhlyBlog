@@ -2,7 +2,7 @@
 
 namespace PhlyBlogTest\Compiler\Listener;
 
-use Laminas\Mvc\Router\Http\TreeRouteStack;
+use Laminas\Router\Http\TreeRouteStack;
 use Laminas\View\Renderer;
 use Laminas\View\Resolver;
 use Laminas\View\View;

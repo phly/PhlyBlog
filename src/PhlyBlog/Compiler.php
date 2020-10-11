@@ -85,11 +85,13 @@ class Compiler implements EventManagerAwareInterface
 
             $event->setEntry($entry);
             $event->setDate($date);
-            $this->getEventManager()->trigger('compile', $event);
+            $event->setName('compile');
+            $this->getEventManager()->triggerEvent($event);
         }
 
         $event = new Compiler\Event();
+        $event->setName('compile.end');
         $event->setTarget($this);
-        $this->getEventManager()->trigger('compile.end', $event);
+        $this->getEventManager()->triggerEvent($event);
     }
 }

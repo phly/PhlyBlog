@@ -24,7 +24,7 @@ class ByYearTest extends TestCase
             $this->file,
             $this->options
         );
-        $this->compiler->getEventManager()->attach($this->byYear);
+        $this->byYear->attach($this->compiler->getEventManager());
     }
 
     public function testCreatesNoFilesPriorToCompilation(): void

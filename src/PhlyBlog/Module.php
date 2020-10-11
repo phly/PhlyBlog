@@ -8,7 +8,7 @@ use Laminas\Http\PhpEnvironment\Response;
 use Laminas\ModuleManager\Feature\ConsoleUsageProviderInterface;
 use Laminas\View\Model;
 use Laminas\View\Renderer\PhpRenderer;
-use Laminas\View\View;
+use PhlyBlog\Factory\CompileControllerFactory;
 
 class Module implements ConsoleUsageProviderInterface
 {
@@ -19,16 +19,16 @@ class Module implements ConsoleUsageProviderInterface
         return include __DIR__ . '/../../config/module.config.php';
     }
 
-    public function getServiceConfig()
+    public function getServiceConfig(): array
     {
         return ['factories' => [
-            'blogrequest'  => function ($services) {
+            'BlogRequest'  => function ($services) {
                 return new Request();
             },
-            'blogresponse' => function ($services) {
+            'BlogResponse' => function ($services) {
                 return new Response();
             },
-            'blogrenderer' => function ($services) {
+            'BlogRenderer' => function ($services) {
                 $helpers  = $services->get('ViewHelperManager');
                 $resolver = $services->get('ViewResolver');
 
@@ -36,10 +36,10 @@ class Module implements ConsoleUsageProviderInterface
                 $renderer->setHelperPluginManager($helpers);
                 $renderer->setResolver($resolver);
 
-                $config = $services->get('Config');
+                $config = $services->get('config');
                 if ($services->has('MvcEvent')) {
-                    $event  = $services->get('MvcEvent');
-                    $model  = $event->getViewModel();
+                    $event = $services->get('MvcEvent');
+                    $model = $event->getViewModel();
                 } else {
                     $model = new Model\ViewModel();
                 }
@@ -55,35 +55,19 @@ class Module implements ConsoleUsageProviderInterface
         ]];
     }
 
-    public function getControllerConfig()
+    public function getControllerConfig(): array
     {
         return ['factories' => [
-            'PhlyBlog\CompileController' => function ($controllers) {
-                $services = $controllers->getServiceLocator();
-                $config   = $services->get('Config');
-                $config   = isset($config['blog']) ? $config['blog'] : [];
-
-                $request  = $services->get('BlogRequest');
-                $response = $services->get('BlogResponse');
-                $view     = new View();
-                $view->setRequest($request);
-                $view->setResponse($response);
-
-                $controller = new CompileController();
-                $controller->setConfig($config);
-                $controller->setConsole($services->get('Console'));
-                $controller->setView($view);
-                return $controller;
-            },
+            CompileController::class => CompileControllerFactory::class,
         ]];
     }
 
-    public function getConsoleBanner(Console $console)
+    public function getConsoleBanner(Console $console): string
     {
         return 'Phly Static Blog Generator';
     }
 
-    public function getConsoleUsage(Console $console)
+    public function getConsoleUsage(Console $console): array
     {
         return [
             'blog compile [--all|-a] [--entries|-e] [--archive|-c] [--year|-y] [--month|-m] [--day|-d] [--tag|-t] [--author|-r]' => 'Compile blog',
@@ -98,18 +82,20 @@ class Module implements ConsoleUsageProviderInterface
         ];
     }
 
-    public function onBootstrap($e)
+    public function onBootstrap($e): void
     {
         $app          = $e->getApplication();
         $services     = $app->getServiceManager();
         self::$config = $services->get('config');
     }
 
-    public static function prepareCompilerView($view, $config, $services)
+    public static function prepareCompilerView($view, $config, $services): void
     {
         $renderer = $services->get('BlogRenderer');
-        $view->addRenderingStrategy(function($e) use ($renderer) {
-            return $renderer;
-        }, 100);
+        $view->addRenderingStrategy(
+            function ($e) use ($renderer) {
+                return $renderer;
+            }, 100
+        );
     }
 }

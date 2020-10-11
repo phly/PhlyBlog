@@ -28,7 +28,7 @@ class ByMonthTest extends TestCase
             $this->file,
             $this->options
         );
-        $this->compiler->getEventManager()->attach($this->byMonth);
+        $this->byMonth->attach($this->compiler->getEventManager());
 
         $this->months = [];
         $self         = $this;

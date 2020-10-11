@@ -9,6 +9,7 @@ use Laminas\EventManager\EventManagerInterface;
 use Laminas\Mvc\Controller\AbstractActionController;
 use Laminas\Stdlib\ArrayUtils;
 use Laminas\View\View;
+use Psr\Container\ContainerInterface;
 use RuntimeException;
 use Traversable;
 
@@ -25,13 +26,21 @@ use function strlen;
 
 class CompileController extends AbstractActionController
 {
-    public $config = [];
-    public $view;
-
-    protected $compiler;
-    protected $compilerOptions;
+    /** @var Console */
     protected $console;
+    /** @var View */
+    public $view;
+    /** @var ContainerInterface */
+    private $container;
+    /** @var array<string, mixed> */
+    public $config = [];
+    /** @var Compiler|null */
+    protected $compiler;
+    /** @var CompilerOptions|null */
+    protected $compilerOptions;
+    /** @var Compiler\ResponseFile|null */
     protected $responseFile;
+    /** @var Compiler\FileWriter|null */
     protected $writer;
 
     protected $defaultOptions
@@ -45,6 +54,14 @@ class CompileController extends AbstractActionController
             'tag'     => false,
             'author'  => false,
         ];
+
+    public function __construct(Console $console, View $view, ContainerInterface $container, array $config)
+    {
+        $this->console   = $console;
+        $this->view      = $view;
+        $this->container = $container;
+        $this->config    = $config;
+    }
 
     public function setConfig($config)
     {
@@ -70,7 +87,8 @@ class CompileController extends AbstractActionController
     public function setEventManager(EventManagerInterface $events)
     {
         parent::setEventManager($events);
-        $events->attach('dispatch', function ($e) {
+        $events->attach(
+            'dispatch', function ($e) {
             $controller = $e->getTarget();
             $config     = $controller->config;
             if ($config['view_callback'] && is_callable($config['view_callback'])) {
@@ -79,7 +97,8 @@ class CompileController extends AbstractActionController
                 $locator  = $controller->getServiceLocator();
                 call_user_func($callable, $view, $config, $locator);
             }
-        }, 100);
+        }, 100
+        );
     }
 
     public function getFlags()
@@ -174,8 +193,13 @@ class CompileController extends AbstractActionController
 
     public function attachTags()
     {
-        $tags = new Compiler\Listener\Tags($this->view, $this->getWriter(), $this->getResponseFile(), $this->getCompilerOptions());
-        $this->getCompiler()->getEventManager()->attach($tags);
+        $tags = new Compiler\Listener\Tags(
+            $this->view,
+            $this->getWriter(),
+            $this->getResponseFile(),
+            $this->getCompilerOptions()
+        );
+        $tags->attach($this->getCompiler()->getEventManager());
         return $tags;
     }
 
@@ -190,37 +214,37 @@ class CompileController extends AbstractActionController
 
         if ($flags['all'] || $flags['entries']) {
             $entries = new Compiler\Listener\Entries($view, $responseFile, $options);
-            $compiler->getEventManager()->attach($entries);
+            $entries->attach($compiler->getEventManager());
             $listeners['entries'] = $entries;
         }
 
         if ($flags['all'] || $flags['archive']) {
             $archive = new Compiler\Listener\Archives($view, $writer, $responseFile, $options);
-            $compiler->getEventManager()->attach($archive);
+            $archive->attach($compiler->getEventManager());
             $listeners['archives'] = $archive;
         }
 
         if ($flags['all'] || $flags['year']) {
             $byYear = new Compiler\Listener\ByYear($view, $writer, $responseFile, $options);
-            $compiler->getEventManager()->attach($byYear);
+            $byYear->attach($compiler->getEventManager());
             $listeners['entries by year'] = $byYear;
         }
 
         if ($flags['all'] || $flags['month']) {
             $byMonth = new Compiler\Listener\ByMonth($view, $writer, $responseFile, $options);
-            $compiler->getEventManager()->attach($byMonth);
+            $byMonth->attach($compiler->getEventManager());
             $listeners['entries by month'] = $byMonth;
         }
 
         if ($flags['all'] || $flags['day']) {
             $byDay = new Compiler\Listener\ByDate($view, $writer, $responseFile, $options);
-            $compiler->getEventManager()->attach($byDay);
+            $byDay->attach($compiler->getEventManager());
             $listeners['entries by day'] = $byDay;
         }
 
         if ($flags['all'] || $flags['author']) {
             $byAuthor = new Compiler\Listener\Authors($view, $writer, $responseFile, $options);
-            $compiler->getEventManager()->attach($byAuthor);
+            $byAuthor->attach($compiler->getEventManager());
             $listeners['entries by author'] = $byAuthor;
         }
 
@@ -235,10 +259,12 @@ class CompileController extends AbstractActionController
     {
         $request = $this->getRequest();
         if (! $request instanceof ConsoleRequest) {
-            throw new RuntimeException(sprintf(
-                '%s may only be called from the console',
-                __METHOD__
-            ));
+            throw new RuntimeException(
+                sprintf(
+                    '%s may only be called from the console',
+                    __METHOD__
+                )
+            );
         }
 
         $flags     = $this->getFlags();
@@ -263,13 +289,7 @@ class CompileController extends AbstractActionController
                 Color::BLUE
             );
             $cloud = $tags->getTagCloud();
-            call_user_func(
-                $callable,
-                $cloud,
-                $this->view,
-                $this->config,
-                $this->getServiceLocator()
-            );
+            $callable($cloud, $this->view, $this->config, $this->container);
             $this->reportDone($width, 32);
         }
 

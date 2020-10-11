@@ -18,7 +18,7 @@ class EntriesTest extends TestCase
     {
         $this->injectScaffolds();
         $this->entries = new Entries($this->view, $this->file, $this->options);
-        $this->compiler->getEventManager()->attach($this->entries);
+        $this->entries->attach($this->compiler->getEventManager());
     }
 
     public function testCreatesNoFilesPriorToCompilation(): void
