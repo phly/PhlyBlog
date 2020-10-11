@@ -12,15 +12,15 @@ directly.
 Requirements
 ------------
 
-- PHP >= 5.3.3
-- Zend Framework 2 >= 2.0.0beta4, specifically: 
-  - Laminas\View\View, used to render and write generated files
-  - Laminas\Mvc and Laminas\ModuleManager, as this implements a module, and the
-    compiler script depends on it and an Application instance. As such, it also
-    has a dependency on Laminas\Loader, Laminas\ServiceManager, and Laminas\EventManager.
-  - Laminas\Feed\Writer
-  - Laminas\Tag\Cloud
-- PhlyCommon (for Entity and Filter interfaces)
+- PHP >= `7.3`
+- Laminas packages, notably: 
+  - `Laminas\View\View`, used to render and write generated files
+  - `Laminas\Mvc` and `Laminas\ModuleManager`, as this implements a module, and the
+    compiler script depends on it and an `Application` instance. As such, it also
+    has a dependency on `Laminas\ServiceManager` and `Laminas\EventManager`.
+  - `Laminas\Feed\Writer`
+  - `Laminas\Tag\Cloud`
+- `PhlyCommon` (for Entity and Filter interfaces)
 
 Installation
 ------------
@@ -31,9 +31,8 @@ project:
 
 ```js
 {
-    "minimum-stability": "dev",
     "require": {
-        "phly/phly-blog": "dev-master"
+        "phly/phly-blog": "^3.0"
     }
 }
 ```
