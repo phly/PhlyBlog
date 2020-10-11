@@ -37,6 +37,11 @@
     "config": {
         "sort-packages": true
     },
+    "extra": {
+        "laminas": {
+            "module": "PhlyBlog"
+        }
+    },
     "autoload": {
         "psr-0": {
             "PhlyBlog": "src/"
