@@ -2,28 +2,17 @@
 
 namespace PhlyBlog;
 
-use Traversable;
 use Laminas\Console\Adapter\AdapterInterface as Console;
 use Laminas\Http\PhpEnvironment\Request;
 use Laminas\Http\PhpEnvironment\Response;
 use Laminas\ModuleManager\Feature\ConsoleUsageProviderInterface;
-use Laminas\Stdlib\ArrayUtils;
-use Laminas\View\Renderer\PhpRenderer;
 use Laminas\View\Model;
+use Laminas\View\Renderer\PhpRenderer;
 use Laminas\View\View;
 
 class Module implements ConsoleUsageProviderInterface
 {
     public static $config;
-
-    public function getAutoloaderConfig()
-    {
-        return array(
-            'Laminas\Loader\ClassMapAutoloader' => array(
-                __DIR__ . '/autoload_classmap.php'
-            ),
-        );
-    }
 
     public function getConfig()
     {
@@ -32,8 +21,8 @@ class Module implements ConsoleUsageProviderInterface
 
     public function getServiceConfig()
     {
-        return array('factories' => array(
-            'blogrequest' => function ($services) {
+        return ['factories' => [
+            'blogrequest'  => function ($services) {
                 return new Request();
             },
             'blogresponse' => function ($services) {
@@ -63,20 +52,20 @@ class Module implements ConsoleUsageProviderInterface
 
                 return $renderer;
             },
-        ));
+        ]];
     }
 
     public function getControllerConfig()
     {
-        return array('factories' => array(
+        return ['factories' => [
             'PhlyBlog\CompileController' => function ($controllers) {
-                $services   = $controllers->getServiceLocator();
-                $config     = $services->get('Config');
-                $config     = isset($config['blog']) ? $config['blog'] : array();
+                $services = $controllers->getServiceLocator();
+                $config   = $services->get('Config');
+                $config   = isset($config['blog']) ? $config['blog'] : [];
 
-                $request    = $services->get('BlogRequest');
-                $response   = $services->get('BlogResponse');
-                $view       = new View();
+                $request  = $services->get('BlogRequest');
+                $response = $services->get('BlogResponse');
+                $view     = new View();
                 $view->setRequest($request);
                 $view->setResponse($response);
 
@@ -86,7 +75,7 @@ class Module implements ConsoleUsageProviderInterface
                 $controller->setView($view);
                 return $controller;
             },
-        ));
+        ]];
     }
 
     public function getConsoleBanner(Console $console)
@@ -96,17 +85,17 @@ class Module implements ConsoleUsageProviderInterface
 
     public function getConsoleUsage(Console $console)
     {
-        return array(
+        return [
             'blog compile [--all|-a] [--entries|-e] [--archive|-c] [--year|-y] [--month|-m] [--day|-d] [--tag|-t] [--author|-r]' => 'Compile blog',
-            array('--all|-a'     ,  'Execute all actions (default)'),
-            array('--entries|-e' ,  'Compile entries'),
-            array('--archive|-c' ,  'Compile paginated archive (and feed)'),
-            array('--year|-y'    ,  'Compile paginated entries by year'),
-            array('--month|-m'   ,  'Compile paginated entries by month'),
-            array('--day|-d'     ,  'Compile paginated entries by day'),
-            array('--tag|-t'     ,  'Compile paginated entries by tag (and feeds)'),
-            array('--author|-r'  ,  'Compile paginated entries by author (and feeds)'),
-        );
+            ['--all|-a', 'Execute all actions (default)'],
+            ['--entries|-e', 'Compile entries'],
+            ['--archive|-c', 'Compile paginated archive (and feed)'],
+            ['--year|-y', 'Compile paginated entries by year'],
+            ['--month|-m', 'Compile paginated entries by month'],
+            ['--day|-d', 'Compile paginated entries by day'],
+            ['--tag|-t', 'Compile paginated entries by tag (and feeds)'],
+            ['--author|-r', 'Compile paginated entries by author (and feeds)'],
+        ];
     }
 
     public function onBootstrap($e)

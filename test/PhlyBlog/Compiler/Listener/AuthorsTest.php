@@ -1,56 +1,77 @@
 <?php
-namespace PhlyBlog\Compiler\Listener;
 
-use PHPUnit_Framework_TestCase as TestCase;
+namespace PhlyBlogTest\Compiler\Listener;
+
+use PhlyBlog\Compiler\Listener\Authors;
+use PHPUnit\Framework\TestCase;
+
+use function sprintf;
+use function str_replace;
 
 class AuthorsTest extends TestCase
 {
-    public function setUp()
+    use TestHelper;
+
+    /** @var Authors */
+    private $authors;
+
+    protected function setUp(): void
     {
-        TestHelper::injectScaffolds($this);
-        $this->authors = new Authors($this->view, $this->writer, $this->file, $this->options);
+        $this->injectScaffolds();
+        $this->authors = new Authors(
+            $this->view,
+            $this->writer,
+            $this->file,
+            $this->options
+        );
         $this->compiler->getEventManager()->attach($this->authors);
     }
 
-    public function testCreatesNoFilesPriorToCompilation()
+    public function testCreatesNoFilesPriorToCompilation(): void
     {
         $this->authors->compile();
-        $this->assertTrue(empty($this->writer->files));
+        self::assertEmpty($this->writer->files);
     }
 
-    public function testCreatesFilesFollowingCompilation()
+    public function testCreatesFilesFollowingCompilation(): void
     {
         $this->compiler->compile();
         $this->authors->compile();
 
-        $this->assertFalse(empty($this->writer->files));
+        self::assertNotEmpty($this->writer->files);
 
-        $filenameTemplate = $this->options->getByAuthorFilenameTemplate();
-        $filenameTemplate = str_replace('-p%d', '', $filenameTemplate);
+        $filenameTemplate    = $this->options->getByAuthorFilenameTemplate();
+        $filenameTemplate    = str_replace('-p%d', '', $filenameTemplate);
         $authorTitleTemplate = $this->options->getByAuthorTitle();
         foreach ($this->expected['authors'] as $author) {
             $filename = sprintf($filenameTemplate, $author['id']);
-            $this->assertArrayHasKey($filename, $this->writer->files);
+            self::assertArrayHasKey($filename, $this->writer->files);
             $authorTitle = sprintf($authorTitleTemplate, $author['name']);
-            $this->assertContains($authorTitle, $this->writer->files[$filename]);
+            self::assertStringContainsString(
+                $authorTitle,
+                $this->writer->files[$filename]
+            );
         }
     }
 
-    public function testCreatesFeedsFollowingCompilation()
+    public function testCreatesFeedsFollowingCompilation(): void
     {
         $this->compiler->compile();
         $this->authors->compile();
 
-        $this->assertFalse(empty($this->writer->files));
+        self::assertNotEmpty($this->writer->files);
 
         $filenameTemplate    = $this->options->getAuthorFeedFilenameTemplate();
         $authorTitleTemplate = $this->options->getAuthorFeedTitleTemplate();
-        foreach (array('atom', 'rss') as $type) {
+        foreach (['atom', 'rss'] as $type) {
             foreach ($this->expected['authors'] as $author) {
                 $filename = sprintf($filenameTemplate, $author['id'], $type);
-                $this->assertArrayHasKey($filename, $this->writer->files);
+                self::assertArrayHasKey($filename, $this->writer->files);
                 $authorTitle = sprintf($authorTitleTemplate, $author['name']);
-                $this->assertContains($authorTitle, $this->writer->files[$filename]);
+                self::assertStringContainsString(
+                    $authorTitle,
+                    $this->writer->files[$filename]
+                );
             }
         }
     }

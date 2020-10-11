@@ -1,139 +1,152 @@
 <?php
 
-namespace PhlyBlog;
+namespace PhlyBlogTest;
 
-use PHPUnit_Framework_TestCase as TestCase,
-    DateTime;
+use DateTime;
+use PhlyBlog\EntryEntity;
+use PhlyBlog\Filter\EntryFilter;
+use PHPUnit\Framework\TestCase;
+
+use function array_values;
+use function count;
+use function strtotime;
+use function var_export;
 
 class EntryEntityTest extends TestCase
 {
-    public function setUp()
+    /** @var EntryEntity */
+    private $entry;
+
+    protected function setUp(): void
     {
         $this->entry = new EntryEntity();
     }
 
-    public function testUsesEntryFilterAsDefaultFilter()
+    public function testUsesEntryFilterAsDefaultFilter(): void
     {
         $filter = $this->entry->getInputFilter();
-        $this->assertInstanceOf('PhlyBlog\Filter\EntryFilter', $filter);
+        self::assertInstanceOf(EntryFilter::class, $filter);
     }
 
-    public function testSettingTitleSetsId()
+    public function testSettingTitleSetsId(): void
     {
         $this->entry->setTitle('Foo Bar');
-        $this->assertEquals('foo-bar', $this->entry->getId());
+        self::assertEquals('foo-bar', $this->entry->getId());
     }
 
-    public function testAcceptsStringsForCreatedTimestamps()
+    public function testAcceptsStringsForCreatedTimestamps(): void
     {
         $this->entry->setCreated('today');
         $expected = strtotime('today');
-        $this->assertEquals($expected, $this->entry->getCreated());
+        self::assertEquals($expected, $this->entry->getCreated());
     }
 
-    public function testAcceptsIntegersForCreatedTimestamps()
+    public function testAcceptsIntegersForCreatedTimestamps(): void
     {
         $expected = strtotime('2010-12-29 15:39Z-0500');
         $this->entry->setCreated($expected);
-        $this->assertEquals($expected, $this->entry->getCreated());
+        self::assertEquals($expected, $this->entry->getCreated());
     }
 
-    public function testAcceptsDateTimeForCreatedTimestamps()
+    public function testAcceptsDateTimeForCreatedTimestamps(): void
     {
         $date = new DateTime('today');
         $this->entry->setCreated($date);
-        $this->assertEquals($date->getTimestamp(), $this->entry->getCreated());
+        self::assertEquals($date->getTimestamp(), $this->entry->getCreated());
     }
 
-    public function testAcceptsStringsForUpdatedTimestamps()
+    public function testAcceptsStringsForUpdatedTimestamps(): void
     {
         $this->entry->setUpdated('today');
         $expected = strtotime('today');
-        $this->assertEquals($expected, $this->entry->getUpdated());
+        self::assertEquals($expected, $this->entry->getUpdated());
     }
 
-    public function testAcceptsIntegersForUpdatedTimestamps()
+    public function testAcceptsIntegersForUpdatedTimestamps(): void
     {
         $expected = strtotime('2010-12-29 15:39Z-0500');
         $this->entry->setUpdated($expected);
-        $this->assertEquals($expected, $this->entry->getUpdated());
+        self::assertEquals($expected, $this->entry->getUpdated());
     }
 
-    public function testAcceptsDateTimeForUpdatedTimestamps()
+    public function testAcceptsDateTimeForUpdatedTimestamps(): void
     {
         $date = new DateTime('today');
         $this->entry->setUpdated($date);
-        $this->assertEquals($date->getTimestamp(), $this->entry->getUpdated());
+        self::assertEquals($date->getTimestamp(), $this->entry->getUpdated());
     }
 
-    public function testAmericaNewYorkIsDefaultTimezone()
+    public function testAmericaNewYorkIsDefaultTimezone(): void
     {
-        $this->assertEquals('America/New_York', $this->entry->getTimezone());
+        self::assertEquals('America/New_York', $this->entry->getTimezone());
     }
 
-    public function testIsDraftByDefault()
+    public function testIsDraftByDefault(): void
     {
-        $this->assertTrue($this->entry->isDraft());
+        self::assertTrue($this->entry->isDraft());
     }
 
-    public function testIsPublicByDefault()
+    public function testIsPublicByDefault(): void
     {
-        $this->assertTrue($this->entry->isPublic());
+        self::assertTrue($this->entry->isPublic());
     }
 
-    public function testNoTagsByDefault()
+    public function testNoTagsByDefault(): void
     {
-        $this->assertEquals(array(), $this->entry->getTags());
+        self::assertEquals([], $this->entry->getTags());
     }
 
-    public function testCanAddManyTagsAtOnce()
+    public function testCanAddManyTagsAtOnce(): void
     {
-        $this->entry->setTags(array('foo', 'bar', 'baz'));
-        $this->assertEquals(array('foo', 'bar', 'baz'), $this->entry->getTags());
+        $this->entry->setTags(['foo', 'bar', 'baz']);
+        self::assertEquals(['foo', 'bar', 'baz'], $this->entry->getTags());
     }
 
-    public function testCallingSetTagsMultipleTimesOverwrites()
+    public function testCallingSetTagsMultipleTimesOverwrites(): void
     {
-        $this->entry->setTags(array('foo', 'bar', 'baz'));
-        $this->entry->setTags(array('oof', 'rab', 'zab'));
-        $this->assertEquals(array('oof', 'rab', 'zab'), $this->entry->getTags());
+        $this->entry->setTags(['foo', 'bar', 'baz']);
+        $this->entry->setTags(['oof', 'rab', 'zab']);
+        self::assertEquals(['oof', 'rab', 'zab'], $this->entry->getTags());
     }
 
-    public function testCanAddTagsOneAtATime()
+    public function testCanAddTagsOneAtATime(): void
     {
-        $this->entry->setTags(array('foo'))
-                    ->addTag('baz')
-                    ->addTag('bar');
-        $this->assertEquals(array('foo', 'baz', 'bar'), $this->entry->getTags());
+        $this->entry->setTags(['foo'])
+            ->addTag('baz')
+            ->addTag('bar');
+        self::assertEquals(['foo', 'baz', 'bar'], $this->entry->getTags());
     }
 
-    public function testCanRemoveSingleTags()
+    public function testCanRemoveSingleTags(): void
     {
-        $this->entry->setTags(array('foo', 'bar', 'baz'));
+        $this->entry->setTags(['foo', 'bar', 'baz']);
         $this->entry->removeTag('bar');
-        $this->assertEquals(array('foo', 'baz'), array_values($this->entry->getTags()));
+        self::assertEquals(
+            ['foo', 'baz'],
+            array_values($this->entry->getTags())
+        );
     }
 
-    public function testCanPopulateFromArray()
+    public function testCanPopulateFromArray(): void
     {
         $this->loadFromArray();
-        $this->assertEquals('foo-bar', $this->entry->getId());
-        $this->assertEquals('Foo Bar', $this->entry->getTitle());
-        $this->assertEquals('Foo bar. Baz. Bat bedat.', $this->entry->getBody());
-        $this->assertEquals('matthew', $this->entry->getAuthor());
-        $this->assertTrue($this->entry->isDraft());
-        $this->assertFalse($this->entry->isPublic());
-        $this->assertEquals(strtotime('today'), $this->entry->getCreated());
-        $this->assertEquals(strtotime('today'), $this->entry->getUpdated());
-        $this->assertEquals('America/Chicago', $this->entry->getTimezone());
-        $this->assertEquals(array('foo', 'bar'), $this->entry->getTags());
+        self::assertEquals('foo-bar', $this->entry->getId());
+        self::assertEquals('Foo Bar', $this->entry->getTitle());
+        self::assertEquals('Foo bar. Baz. Bat bedat.', $this->entry->getBody());
+        self::assertEquals('matthew', $this->entry->getAuthor());
+        self::assertTrue($this->entry->isDraft());
+        self::assertFalse($this->entry->isPublic());
+        self::assertEquals(strtotime('today'), $this->entry->getCreated());
+        self::assertEquals(strtotime('today'), $this->entry->getUpdated());
+        self::assertEquals('America/Chicago', $this->entry->getTimezone());
+        self::assertEquals(['foo', 'bar'], $this->entry->getTags());
     }
 
-    public function testCanSerializeToArray()
+    public function testCanSerializeToArray(): void
     {
         $this->loadFromArray();
-        $values = $this->entry->toArray();
-        $expected = array(
+        $values   = $this->entry->toArray();
+        $expected = [
             'id'        => 'foo-bar',
             'title'     => 'Foo Bar',
             'body'      => 'Foo bar. Baz. Bat bedat.',
@@ -143,114 +156,116 @@ class EntryEntityTest extends TestCase
             'created'   => strtotime('today'),
             'updated'   => strtotime('today'),
             'timezone'  => 'America/Chicago',
-            'tags'      => array('foo', 'bar'),
-        );
+            'tags'      => ['foo', 'bar'],
+        ];
         foreach ($expected as $key => $value) {
-            $this->assertEquals($value, $values[$key]);
+            self::assertEquals($value, $values[$key]);
         }
     }
 
-    public function testOverloadingOfProperties()
+    public function testOverloadingOfProperties(): void
     {
         $this->loadFromArray();
-        $this->assertTrue(isset($this->entry->id));
-        $this->assertTrue(isset($this->entry->title));
-        $this->assertTrue(isset($this->entry->body));
-        $this->assertTrue(isset($this->entry->author));
-        $this->assertTrue(isset($this->entry->isDraft));
-        $this->assertTrue(isset($this->entry->isPublic));
-        $this->assertTrue(isset($this->entry->created));
-        $this->assertTrue(isset($this->entry->updated));
-        $this->assertTrue(isset($this->entry->timezone));
-        $this->assertTrue(isset($this->entry->tags));
-        $this->assertEquals('foo-bar', $this->entry->id);
-        $this->assertEquals('Foo Bar', $this->entry->title);
-        $this->assertEquals('Foo bar. Baz. Bat bedat.', $this->entry->body);
-        $this->assertEquals('matthew', $this->entry->author);
-        $this->assertTrue($this->entry->isDraft);
-        $this->assertFalse($this->entry->isPublic);
-        $this->assertEquals(strtotime('today'), $this->entry->created);
-        $this->assertEquals(strtotime('today'), $this->entry->updated);
-        $this->assertEquals('America/Chicago', $this->entry->timezone);
-        $this->assertEquals(array('foo', 'bar'), $this->entry->tags);
+        self::assertTrue(isset($this->entry->id));
+        self::assertTrue(isset($this->entry->title));
+        self::assertTrue(isset($this->entry->body));
+        self::assertTrue(isset($this->entry->author));
+        self::assertTrue(isset($this->entry->isDraft));
+        self::assertTrue(isset($this->entry->isPublic));
+        self::assertTrue(isset($this->entry->created));
+        self::assertTrue(isset($this->entry->updated));
+        self::assertTrue(isset($this->entry->timezone));
+        self::assertTrue(isset($this->entry->tags));
+        self::assertEquals('foo-bar', $this->entry->id);
+        self::assertEquals('Foo Bar', $this->entry->title);
+        self::assertEquals('Foo bar. Baz. Bat bedat.', $this->entry->body);
+        self::assertEquals('matthew', $this->entry->author);
+        self::assertTrue($this->entry->isDraft);
+        self::assertFalse($this->entry->isPublic);
+        self::assertEquals(strtotime('today'), $this->entry->created);
+        self::assertEquals(strtotime('today'), $this->entry->updated);
+        self::assertEquals('America/Chicago', $this->entry->timezone);
+        self::assertEquals(['foo', 'bar'], $this->entry->tags);
     }
 
-    public function testValidationFailsInitially()
+    public function testValidationFailsInitially(): void
     {
-        $this->assertFalse($this->entry->isValid());
+        self::assertFalse($this->entry->isValid());
     }
 
-    public function testValidEntryValidates()
+    public function testValidEntryValidates(): void
     {
         $this->loadFromArray();
         $valid    = $this->entry->isValid();
         $messages = $this->entry->getInputFilter()->getMessages();
-        $this->assertTrue($valid, var_export($messages, 1));
+        self::assertTrue($valid, var_export($messages, 1));
     }
 
-    public function testInputFilterOverwritesValuesWithFilteredVersions()
+    public function testInputFilterOverwritesValuesWithFilteredVersions(): void
     {
         $this->loadFromArray();
         $this->entry->setTitle('foo & bar')
-                    ->setId('foo-bar')
-                    ->setDraft(0)
-                    ->setPublic('')
-                    ->setBody('  Foo Bar. ')
-                    ->setAuthor(' matthew ');
-        $this->assertTrue($this->entry->isValid());
-        $this->assertEquals('foo & bar', $this->entry->getTitle());
-        $this->assertFalse($this->entry->isDraft());
-        $this->assertFalse($this->entry->isPublic());
-        $this->assertEquals('Foo Bar.', $this->entry->getBody());
-        $this->assertEquals('matthew', $this->entry->getAuthor());
+            ->setId('foo-bar')
+            ->setDraft(0)
+            ->setPublic('')
+            ->setBody('  Foo Bar. ')
+            ->setAuthor(' matthew ');
+        self::assertTrue($this->entry->isValid());
+        self::assertEquals('foo & bar', $this->entry->getTitle());
+        self::assertFalse($this->entry->isDraft());
+        self::assertFalse($this->entry->isPublic());
+        self::assertEquals('Foo Bar.', $this->entry->getBody());
+        self::assertEquals('matthew', $this->entry->getAuthor());
     }
 
-    public function testVersionIs2ByDefault()
+    public function testVersionIs2ByDefault(): void
     {
-        $this->assertEquals(2, $this->entry->getVersion());
+        self::assertEquals(2, $this->entry->getVersion());
     }
 
-    public function testSerializingVersion1EntryIncludesComments()
+    public function testSerializingVersion1EntryIncludesComments(): void
     {
         $this->loadFromArray();
         $this->entry->setVersion(1);
         $data = $this->entry->toArray();
-        $this->assertArrayHasKey('comments', $data);
-        $this->assertEquals(2, count($data['comments']));
+        self::assertArrayHasKey('comments', $data);
+        self::assertEquals(2, count($data['comments']));
         foreach ($data['comments'] as $comment) {
-            $this->assertInternalType('array', $comment);
+            self::assertIsArray($comment);
         }
     }
 
-    public function loadFromArray()
+    public function loadFromArray(): void
     {
-        $this->entry->fromArray(array(
-            'id'        => 'foo-bar',
-            'title'     => 'Foo Bar',
-            'body'      => 'Foo bar. Baz. Bat bedat.',
-            'author'    => 'matthew',
-            'is_draft'  => true,
-            'is_public' => false,
-            'created'   => strtotime('today'),
-            'updated'   => strtotime('today'),
-            'timezone'  => 'America/Chicago',
-            'tags'      => array('foo', 'bar'),
-            'comments'  => array(
-                array(
-                    'created'  => strtotime('today'),
-                    'timezone' => 'America/Chicago',
-                    'title'    => 'comment',
-                    'author'   => 'somebody',
-                    'type'     => 'comment',
-                ),
-                array(
-                    'created'  => strtotime('today'),
-                    'timezone' => 'America/Chicago',
-                    'title'    => 'trackback',
-                    'type'     => 'trackback',
-                    'url'      => 'http://example.com/foo',
-                ),
-            )
-        ));
+        $this->entry->fromArray(
+            [
+                'id'        => 'foo-bar',
+                'title'     => 'Foo Bar',
+                'body'      => 'Foo bar. Baz. Bat bedat.',
+                'author'    => 'matthew',
+                'is_draft'  => true,
+                'is_public' => false,
+                'created'   => strtotime('today'),
+                'updated'   => strtotime('today'),
+                'timezone'  => 'America/Chicago',
+                'tags'      => ['foo', 'bar'],
+                'comments'  => [
+                    [
+                        'created'  => strtotime('today'),
+                        'timezone' => 'America/Chicago',
+                        'title'    => 'comment',
+                        'author'   => 'somebody',
+                        'type'     => 'comment',
+                    ],
+                    [
+                        'created'  => strtotime('today'),
+                        'timezone' => 'America/Chicago',
+                        'title'    => 'trackback',
+                        'type'     => 'trackback',
+                        'url'      => 'http://example.com/foo',
+                    ],
+                ],
+            ]
+        );
     }
 }

@@ -1,19 +1,22 @@
 <?php
+
 namespace PhlyBlog\Compiler\Listener;
 
 use DomainException;
-use PhlyBlog\CompilerOptions;
-use PhlyBlog\Compiler\Event;
-use PhlyBlog\Compiler\ResponseFile;
 use Laminas\EventManager\EventManagerInterface as Events;
 use Laminas\EventManager\ListenerAggregateInterface;
-use Laminas\View\View;
 use Laminas\View\Model\ViewModel;
+use Laminas\View\View;
+use PhlyBlog\Compiler\Event;
+use PhlyBlog\CompilerOptions;
+use PhlyBlog\Compiler\ResponseFile;
+
+use function sprintf;
 
 class Entries implements ListenerAggregateInterface
 {
     protected $entries;
-    protected $listeners = array();
+    protected $listeners = [];
     protected $options;
     protected $responseFile;
     protected $view;
@@ -25,9 +28,9 @@ class Entries implements ListenerAggregateInterface
         $this->options      = $options;
     }
 
-    public function attach(Events $events)
+    public function attach(Events $events, $priority = 1)
     {
-        $this->listeners[] = $events->attach('compile', array($this, 'onCompile'));
+        $this->listeners[] = $events->attach('compile', [$this, 'onCompile']);
     }
 
     public function detach(Events $events)
@@ -41,7 +44,7 @@ class Entries implements ListenerAggregateInterface
 
     public function onCompile(Event $e)
     {
-        $entry = $e->getEntry();
+        $entry           = $e->getEntry();
         $this->entries[] = $entry;
     }
 
@@ -52,7 +55,7 @@ class Entries implements ListenerAggregateInterface
 
     public function createEntries($template = null)
     {
-        if (!$this->entries) {
+        if (! $this->entries) {
             return;
         }
 
@@ -68,9 +71,11 @@ class Entries implements ListenerAggregateInterface
             $filename = sprintf($filenameTemplate, $entry->getId());
             $this->responseFile->setFilename($filename);
 
-            $model = new ViewModel(array(
-                'entry' => $entry,
-            ));
+            $model = new ViewModel(
+                [
+                    'entry' => $entry,
+                ]
+            );
             $model->setTemplate($template);
 
             $this->view->render($model);

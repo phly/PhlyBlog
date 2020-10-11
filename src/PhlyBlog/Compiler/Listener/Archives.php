@@ -1,10 +1,15 @@
 <?php
+
 namespace PhlyBlog\Compiler\Listener;
 
-use InvalidArgumentException;
 use DomainException;
+use InvalidArgumentException;
 use PhlyBlog\Compiler\Event;
 use PhlyBlog\Compiler\SortedEntries;
+
+use function in_array;
+use function iterator_to_array;
+use function strtolower;
 
 class Archives extends AbstractList
 {
@@ -13,7 +18,7 @@ class Archives extends AbstractList
     public function onCompile(Event $e)
     {
         $entry = $e->getEntry();
-        if (!$entry->isPublic()) {
+        if (! $entry->isPublic()) {
             return;
         }
 
@@ -50,7 +55,7 @@ class Archives extends AbstractList
         $this->iterateAndRenderList(
             $this->archives,
             $filenameTemplate,
-            array(),
+            [],
             $title,
             $urlTemplate,
             false,
@@ -61,14 +66,16 @@ class Archives extends AbstractList
     public function createArchiveFeed($type, $title = '')
     {
         $type = strtolower($type);
-        if (!in_array($type, array('atom', 'rss'))) {
-            throw new InvalidArgumentException('Feed type must be "atom" or "rss"');
+        if (! in_array($type, ['atom', 'rss'])) {
+            throw new InvalidArgumentException(
+                'Feed type must be "atom" or "rss"'
+            );
         }
 
-        $filename     = $this->options->getFeedFilename();
-        $blogLink     = $this->options->getFeedBlogLink();
-        $feedLink     = $this->options->getFeedFeedLink();
-        $title        = $this->options->getFeedTitle();
+        $filename = $this->options->getFeedFilename();
+        $blogLink = $this->options->getFeedBlogLink();
+        $feedLink = $this->options->getFeedFeedLink();
+        $title    = $this->options->getFeedTitle();
 
         $this->iterateAndGenerateFeed(
             $type,

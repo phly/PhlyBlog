@@ -1,60 +1,73 @@
 <?php
+
 namespace PhlyBlog\Filter;
 
+use Laminas\Filter\StringTrim;
+use Laminas\Filter\StripTags;
 use Laminas\InputFilter\InputFilter;
+use Laminas\Validator\EmailAddress;
+use Laminas\Validator\StringLength;
 
 class AuthorFilter extends InputFilter
 {
     public function __construct()
     {
-        $this->add(array(
-            'name' => 'id',
-            'filters' => array(
-                array('name' => 'string_trim'),
-            ),
-            'validators' => array(
-                new AuthorIsValid(),
-            ),
-            'required' => true,
-        ));
+        $this->add(
+            [
+                'name'       => 'id',
+                'filters'    => [
+                    ['name' => StringTrim::class],
+                ],
+                'validators' => [
+                    new AuthorIsValid(),
+                ],
+                'required'   => true,
+            ]
+        );
 
-        $this->add(array(
-            'name' => 'name',
-            'filters' => array(
-                array('name' => 'string_trim'),
-                array('name' => 'strip_tags'),
-            ),
-            'validators' => array(
-                array(
-                    'name' => 'string_length',
-                    'options' => array(
-                        'min' => 1,
-                    ),
-                ),
-            ),
-            'required' => true,
-        ));
+        $this->add(
+            [
+                'name'       => 'name',
+                'filters'    => [
+                    ['name' => StringTrim::class],
+                    ['name' => StripTags::class],
+                ],
+                'validators' => [
+                    [
+                        'name'    => StringLength::class,
+                        'options' => [
+                            'min' => 1,
+                        ],
+                    ],
+                ],
+                'required'   => true,
+            ]
+        );
 
-        $this->add(array(
-            'name' => 'email',
-            'filters' => array(
-                array('name' => 'string_trim'),
-            ),
-            'validators' => array(
-                array('name' => 'emailaddress'),
-            ),
-            'allow_empty' => true,
-        ));
+        $this->add(
+            [
+                'name'        => 'email',
+                'filters'     => [
+                    ['name' => StringTrim::class],
+                ],
+                'validators'  => [
+                    ['name' => EmailAddress::class],
+                ],
+                'allow_empty' => true,
+            ]
+        );
 
-        $this->add(array(
-            'name' => 'url',
-            'filters' => array(
-                array('name' => 'string_trim'),
-            ),
-            'validators' => array(
-                new Url(),
-            ),
-            'allow_empty' => true,
-        ));
+        $this->add(
+            [
+                'name'        => 'url',
+                'filters'     => [
+                    ['name' => StringTrim::class],
+                ],
+                'validators'  => [
+                    new Url(),
+                ],
+                'allow_empty' => true,
+            ]
+        );
     }
 }

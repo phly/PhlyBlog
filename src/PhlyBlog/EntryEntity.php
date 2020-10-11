@@ -1,9 +1,27 @@
 <?php
+
 namespace PhlyBlog;
 
+use DateTime;
+use Laminas\InputFilter\InputFilterInterface;
+use MongoDate;
 use PhlyCommon\Entity as EntityDefinition;
 use PhlyCommon\Filter\Timestamp as TimestampFilter;
-use Laminas\InputFilter\InputFilterInterface;
+use UnexpectedValueException;
+
+use function array_merge;
+use function array_search;
+use function array_unique;
+use function in_array;
+use function is_array;
+use function is_scalar;
+use function method_exists;
+use function property_exists;
+use function sprintf;
+use function substr;
+use function ucfirst;
+
+use const SORT_STRING;
 
 class EntryEntity implements EntityDefinition
 {
@@ -25,18 +43,18 @@ class EntryEntity implements EntityDefinition
      */
     protected $id;
     protected $title;
-    protected $body = '';
+    protected $body     = '';
     protected $extended = '';
     protected $author;
-    protected $isDraft = true;
+    protected $isDraft  = true;
     protected $isPublic = true;
     protected $created;
     protected $updated;
     protected $timezone = 'America/New_York';
-    protected $tags = array();
-    protected $metadata = array();
-    protected $comments = array();
-    protected $version = 2;
+    protected $tags     = [];
+    protected $metadata = [];
+    protected $comments = [];
+    protected $version  = 2;
 
     private $errorMessages = array();
 
@@ -50,10 +68,9 @@ class EntryEntity implements EntityDefinition
      * Overloading: set property
      *
      * Proxies to setters
-     * 
-     * @param  string $name 
-     * @param  mixed $value 
-     * @return void
+     *
+     * @param string $name
+     * @param mixed  $value
      * @throws UnexpectedValueException
      */
     public function __set($name, $value)
@@ -63,25 +80,27 @@ class EntryEntity implements EntityDefinition
             $this->$method($value);
             return;
         }
-        throw new \UnexpectedValueException(sprintf(
-            'The property "%s" does not exist and cannot be set',
-            $name
-        ));
+        throw new UnexpectedValueException(
+            sprintf(
+                'The property "%s" does not exist and cannot be set',
+                $name
+            )
+        );
     }
 
     /**
      * Overloading: retrieve property
      *
      * Proxies to getters
-     * 
-     * @param  string $name 
+     *
+     * @param string $name
      * @return mixed
      * @throws UnexpectedValueException
      */
     public function __get($name)
     {
         // Booleans:
-        if ('is' == substr($name, 0, 2)) {
+        if ('is' === substr($name, 0, 2)) {
             if (method_exists($this, $name)) {
                 return $this->$name();
             }
@@ -94,16 +113,18 @@ class EntryEntity implements EntityDefinition
         }
 
         // Unknown
-        throw new \UnexpectedValueException(sprintf(
-            'The property "%s" does not exist and cannot be retrieved',
-            $name
-        ));
+        throw new UnexpectedValueException(
+            sprintf(
+                'The property "%s" does not exist and cannot be retrieved',
+                $name
+            )
+        );
     }
 
     /**
      * Overloading: property exists
-     * 
-     * @param  string $name 
+     *
+     * @param string $name
      * @return bool
      */
     public function __isset($name)
@@ -112,17 +133,17 @@ class EntryEntity implements EntityDefinition
     }
 
     /**
-     *
      * set value for identifier
-     * @param  string $value
-     * @return Entry
+     *
+     * @param string $value
+     * @return $this
      */
     public function setId($value)
     {
         $this->id = $value;
         return $this;
     }
-    
+
     /**
      * Get value for identifier
      *
@@ -136,8 +157,8 @@ class EntryEntity implements EntityDefinition
     /**
      * Set value for title
      *
-     * @param  string $value
-     * @return Entry
+     * @param string $value
+     * @return $this
      */
     public function setTitle($value)
     {
@@ -147,7 +168,7 @@ class EntryEntity implements EntityDefinition
         }
         return $this;
     }
-    
+
     /**
      * Get value for title
      *
@@ -161,15 +182,15 @@ class EntryEntity implements EntityDefinition
     /**
      * Set value for body
      *
-     * @param  string $value
-     * @return Entry
+     * @param string $value
+     * @return $this
      */
     public function setBody($value)
     {
         $this->body = $value;
         return $this;
     }
-    
+
     /**
      * Get value for body
      *
@@ -183,15 +204,15 @@ class EntryEntity implements EntityDefinition
     /**
      * Set value for extended body
      *
-     * @param  string $value
-     * @return Entry
+     * @param string $value
+     * @return $this
      */
     public function setExtended($value)
     {
         $this->extended = $value;
         return $this;
     }
-    
+
     /**
      * Get value for extended body
      *
@@ -205,15 +226,15 @@ class EntryEntity implements EntityDefinition
     /**
      * Set value for author
      *
-     * @param  string|object|array $value
-     * @return Entry
+     * @param string|object|array $value
+     * @return $this
      */
     public function setAuthor($value)
     {
         $this->author = $value;
         return $this;
     }
-    
+
     /**
      * Get value for author
      *
@@ -227,16 +248,16 @@ class EntryEntity implements EntityDefinition
     /**
      * Set timestamp when entry was created
      *
-     * @param  DateTime|MongoDate|string|int $value
-     * @return Entry
+     * @param DateTime|MongoDate|string|int $value
+     * @return $this
      */
     public function setCreated($value)
     {
-        $filter = new TimestampFilter;
+        $filter        = new TimestampFilter();
         $this->created = $filter->filter($value);
         return $this;
     }
-    
+
     /**
      * Get value for created
      *
@@ -253,16 +274,16 @@ class EntryEntity implements EntityDefinition
     /**
      * set value when entry updated
      *
-     * @param  int|string|MongoDate|DateTime $value
-     * @return Entry
+     * @param int|string|MongoDate|DateTime $value
+     * @return $this
      */
     public function setUpdated($value)
     {
-        $filter = new TimestampFilter;
+        $filter        = new TimestampFilter();
         $this->updated = $filter->filter($value);
         return $this;
     }
-    
+
     /**
      * Get value when entry updated
      *
@@ -279,15 +300,15 @@ class EntryEntity implements EntityDefinition
     /**
      * Set timezone for timestamps
      *
-     * @param  string $value
-     * @return Entry
+     * @param string $value
+     * @return $this
      */
     public function setTimezone($value)
     {
         $this->timezone = $value;
         return $this;
     }
-    
+
     /**
      * Get timezone value
      *
@@ -300,9 +321,9 @@ class EntryEntity implements EntityDefinition
 
     /**
      * Set draft flag
-     * 
-     * @param  bool $flag 
-     * @return Entry
+     *
+     * @param bool $flag
+     * @return $this
      */
     public function setDraft($flag)
     {
@@ -312,7 +333,7 @@ class EntryEntity implements EntityDefinition
 
     /**
      * Is the entry marked as a draft?
-     * 
+     *
      * @return bool
      */
     public function isDraft()
@@ -322,9 +343,9 @@ class EntryEntity implements EntityDefinition
 
     /**
      * Set public flag
-     * 
-     * @param  bool $flag 
-     * @return Entry
+     *
+     * @param bool $flag
+     * @return $this
      */
     public function setPublic($flag)
     {
@@ -334,7 +355,7 @@ class EntryEntity implements EntityDefinition
 
     /**
      * Is the entry marked as public?
-     * 
+     *
      * @return bool
      */
     public function isPublic()
@@ -347,15 +368,14 @@ class EntryEntity implements EntityDefinition
      *
      * Will overwrite tags; pass an empty array to clear all tags.
      *
-     * @param  array $value
-     * @return Entry
+     * @return $this
      */
     public function setTags(array $value)
     {
         $this->tags = $value;
         return $this;
     }
-    
+
     /**
      * Get tags
      *
@@ -363,15 +383,14 @@ class EntryEntity implements EntityDefinition
      */
     public function getTags()
     {
-        $tags = array_unique($this->tags, SORT_STRING);
-        return $tags;
+        return array_unique($this->tags, SORT_STRING);
     }
 
     /**
      * Add a tag
-     * 
-     * @param  string $tag 
-     * @return Entry
+     *
+     * @param string $tag
+     * @return $this
      */
     public function addTag($tag)
     {
@@ -381,9 +400,8 @@ class EntryEntity implements EntityDefinition
 
     /**
      * Remove a single tag
-     * 
-     * @param  string $tag 
-     * @return void
+     *
+     * @param string $tag
      */
     public function removeTag($tag)
     {
@@ -394,15 +412,15 @@ class EntryEntity implements EntityDefinition
 
     /**
      * Set metadata
-     * 
-     * @param  array $metadata 
-     * @return Entry
+     *
+     * @param array $metadata
+     * @return $this
      */
-    public function setMetadata($metadata, $value = null) 
+    public function setMetadata($metadata, $value = null)
     {
-        if (is_array($metadata) && !empty($metadata)) {
+        if (is_array($metadata) && ! empty($metadata)) {
             $this->metadata = array_merge($this->metadata, $metadata);
-        } elseif (is_scalar($metadata) && !empty($metadata)) {
+        } elseif (is_scalar($metadata) && ! empty($metadata)) {
             $this->metadata[$metadata] = $value;
         }
         return $this;
@@ -410,9 +428,9 @@ class EntryEntity implements EntityDefinition
 
     /**
      * Get individual metadata or the entire set
-     * 
-     * @param  null|scalar $metadata 
-     * @param  mixed $default 
+     *
+     * @param null|scalar $metadata
+     * @param null|mixed  $default
      * @return mixed
      */
     public function getMetadata($metadata = null, $default = null)
@@ -428,25 +446,25 @@ class EntryEntity implements EntityDefinition
 
     /**
      * Does the specific metadata exist?
-     * 
-     * @param  scalar $metadata 
+     *
+     * @param scalar $metadata
      * @return bool
      */
     public function hasMetadata($metadata)
     {
-        return (isset($this->metadata[$metadata]));
+        return isset($this->metadata[$metadata]);
     }
 
     /**
      * Remove a single metadatum
-     * 
-     * @param  null|scalar $key 
+     *
+     * @param null|scalar $key
      * @return bool
      */
     public function removeMetadata($key = null)
     {
         if (null === $key) {
-            $this->metadata = array();
+            $this->metadata = [];
             return true;
         }
         if (is_scalar($key) && isset($this->metadata[$key])) {
@@ -461,15 +479,14 @@ class EntryEntity implements EntityDefinition
      *
      * Only relevant to version 1 entries (imported from s9y).
      *
-     * @param  array $comments
-     * @return Entry
+     * @return $this
      */
     public function setComments(array $comments)
     {
         $this->comments = $comments;
         return $this;
     }
-    
+
     /**
      * Get comments
      *
@@ -488,18 +505,18 @@ class EntryEntity implements EntityDefinition
      * - 1: entries imported from s9y
      * - 2: new entries (utilizing disqus for comments)
      *
-     * @param  int $value
-     * @return Entry
+     * @param int $value
+     * @return $this
      */
     public function setVersion($version)
     {
         $this->version = (int) $version;
-        if (!in_array($this->version, array(1, 2))) {
+        if (! in_array($this->version, [1, 2])) {
             $this->version = 2;
         }
         return $this;
     }
-    
+
     /**
      * Get API version
      *
@@ -512,12 +529,12 @@ class EntryEntity implements EntityDefinition
 
     /**
      * Cast object to array
-     * 
+     *
      * @return array
      */
     public function toArray()
     {
-        $return = array(
+        $return = [
             'id'        => $this->getId(),
             'title'     => $this->getTitle(),
             'body'      => $this->getBody(),
@@ -531,7 +548,7 @@ class EntryEntity implements EntityDefinition
             'tags'      => $this->getTags(),
             'metadata'  => $this->getMetadata(),
             'version'   => $this->getVersion(),
-        );
+        ];
         if (1 == $this->getVersion()) {
             $return['comments'] = $this->getComments();
         }
@@ -540,9 +557,8 @@ class EntryEntity implements EntityDefinition
 
     /**
      * Populate object from array
-     * 
-     * @param  array $array 
-     * @return Entry
+     *
+     * @return $this
      */
     public function fromArray(array $array)
     {

@@ -1,4 +1,5 @@
 <?php
+
 namespace PhlyBlog\Filter;
 
 use Laminas\Uri\Uri;
@@ -7,21 +8,22 @@ use Laminas\Validator\AbstractValidator;
 
 class Url extends AbstractValidator
 {
-    const INVALID_URL  = 'urlInvalid';
+    const INVALID_URL = 'urlInvalid';
 
-    protected $messageTemplates = array(
-        self::INVALID_URL  => 'Invalid url provided; received "%value%".',
-    );
+    protected $messageTemplates
+        = [
+            self::INVALID_URL => 'Invalid url provided; received "%value%".',
+        ];
 
     public function isValid($value)
     {
         $this->setValue($value);
 
-        if (!$value instanceof Uri) {
+        if (! $value instanceof Uri) {
             $value = UriFactory::factory($value);
         }
 
-        if (!$value->isValid()) {
+        if (! $value->isValid()) {
             $this->error(self::INVALID_URL);
             return false;
         }

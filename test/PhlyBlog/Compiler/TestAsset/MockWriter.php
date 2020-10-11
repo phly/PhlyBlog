@@ -1,15 +1,15 @@
 <?php
-namespace PhlyBlog\Compiler\TestAsset;
+
+namespace PhlyBlogTest\Compiler\TestAsset;
 
 use PhlyBlog\Compiler\WriterInterface;
 
 class MockWriter implements WriterInterface
 {
-    public $files = array();
+    public $files = [];
 
-    public function write($filename, $data)
+    public function write($filename, $data): void
     {
         $this->files[$filename] = $data;
     }
 }
-

@@ -1,38 +1,56 @@
 <?php
-namespace PhlyBlog\Compiler\Listener;
 
-use PHPUnit_Framework_TestCase as TestCase;
+namespace PhlyBlogTest\Compiler\Listener;
+
+use PhlyBlog\Compiler\Listener\ByYear;
+use PHPUnit\Framework\TestCase;
+
+use function sprintf;
+use function str_replace;
 
 class ByYearTest extends TestCase
 {
-    public function setUp()
+    use TestHelper;
+
+    /** @var ByYear */
+    private $byYear;
+
+    protected function setUp(): void
     {
-        TestHelper::injectScaffolds($this);
-        $this->byYear = new ByYear($this->view, $this->writer, $this->file, $this->options);
+        $this->injectScaffolds();
+        $this->byYear = new ByYear(
+            $this->view,
+            $this->writer,
+            $this->file,
+            $this->options
+        );
         $this->compiler->getEventManager()->attach($this->byYear);
     }
 
-    public function testCreatesNoFilesPriorToCompilation()
+    public function testCreatesNoFilesPriorToCompilation(): void
     {
         $this->byYear->compile();
-        $this->assertTrue(empty($this->writer->files));
+        self::assertEmpty($this->writer->files);
     }
 
-    public function testCreatesFilesFollowingCompilation()
+    public function testCreatesFilesFollowingCompilation(): void
     {
         $this->compiler->compile();
         $this->byYear->compile();
 
-        $this->assertFalse(empty($this->writer->files));
+        self::assertNotEmpty($this->writer->files);
 
-        $filenameTemplate = $this->options->getByYearFilenameTemplate();
-        $filenameTemplate = str_replace('-p%d', '', $filenameTemplate);
+        $filenameTemplate  = $this->options->getByYearFilenameTemplate();
+        $filenameTemplate  = str_replace('-p%d', '', $filenameTemplate);
         $yearTitleTemplate = $this->options->getByYearTitle();
         foreach ($this->expected['years'] as $year) {
             $filename = sprintf($filenameTemplate, $year);
-            $this->assertArrayHasKey($filename, $this->writer->files);
+            self::assertArrayHasKey($filename, $this->writer->files);
             $yearTitle = sprintf($yearTitleTemplate, $year);
-            $this->assertContains($yearTitle, $this->writer->files[$filename]);
+            self::assertStringContainsString(
+                $yearTitle,
+                $this->writer->files[$filename]
+            );
         }
     }
 }

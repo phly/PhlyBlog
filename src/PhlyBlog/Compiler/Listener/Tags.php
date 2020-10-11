@@ -1,26 +1,34 @@
 <?php
+
 namespace PhlyBlog\Compiler\Listener;
 
-use InvalidArgumentException;
 use DomainException;
+use InvalidArgumentException;
+use Laminas\Tag\Cloud as TagCloud;
 use PhlyBlog\Compiler\Event;
 use PhlyBlog\Compiler\SortedEntries;
-use Laminas\Tag\Cloud as TagCloud;
+
+use function count;
+use function in_array;
+use function iterator_to_array;
+use function sprintf;
+use function str_replace;
+use function strtolower;
 
 class Tags extends AbstractList
 {
     protected $tagCloud;
-    protected $tags      = array();
+    protected $tags = [];
 
     public function onCompile(Event $e)
     {
         $entry = $e->getEntry();
-        if (!$entry->isPublic()) {
+        if (! $entry->isPublic()) {
             return;
         }
 
         foreach ($entry->getTags() as $tag) {
-            if (!isset($this->tags[$tag])) {
+            if (! isset($this->tags[$tag])) {
                 $this->tags[$tag] = new SortedEntries();
             }
             $this->tags[$tag]->insert($entry, $entry->getCreated());
@@ -50,15 +58,18 @@ class Tags extends AbstractList
         $tagUrlTemplate = $this->options->getTagCloudUrlTemplate();
         $cloudOptions   = $this->options->getTagCloudOptions();
 
-        $tags = array();
+        $tags = [];
         foreach ($this->tags as $tag => $list) {
-            $tags[$tag] = array(
-                'title'   => $tag,
-                'weight'  => count($list),
-                'params'  => array(
-                    'url' => sprintf($tagUrlTemplate, str_replace(' ', '+', $tag)),
-                ),
-            );
+            $tags[$tag] = [
+                'title'  => $tag,
+                'weight' => count($list),
+                'params' => [
+                    'url' => sprintf(
+                        $tagUrlTemplate,
+                        str_replace(' ', '+', $tag)
+                    ),
+                ],
+            ];
         }
         $options['tags'] = $tags;
 
@@ -83,7 +94,7 @@ class Tags extends AbstractList
             $this->iterateAndRenderList(
                 $list,
                 $filenameTemplate,
-                array($tag),
+                [$tag],
                 sprintf($titleTemplate, $tag),
                 $urlTemplate,
                 $tag,
@@ -95,8 +106,10 @@ class Tags extends AbstractList
     public function createTagFeeds($type)
     {
         $type = strtolower($type);
-        if (!in_array($type, array('atom', 'rss'))) {
-            throw new InvalidArgumentException('Feed type must be "atom" or "rss"');
+        if (! in_array($type, ['atom', 'rss'])) {
+            throw new InvalidArgumentException(
+                'Feed type must be "atom" or "rss"'
+            );
         }
 
         $filenameTemplate = $this->options->getTagFeedFilenameTemplate();

@@ -1,55 +1,74 @@
 <?php
-namespace PhlyBlog\Compiler\Listener;
 
-use PHPUnit_Framework_TestCase as TestCase;
+namespace PhlyBlogTest\Compiler\Listener;
+
+use PhlyBlog\Compiler\Listener\Archives;
+use PHPUnit\Framework\TestCase;
+
+use function ceil;
+use function count;
+use function sprintf;
 
 class ArchivesTest extends TestCase
 {
-    public function setUp()
+    use TestHelper;
+
+    /** @var Archives */
+    private $archives;
+
+    protected function setUp(): void
     {
-        TestHelper::injectScaffolds($this);
-        $this->archives = new Archives($this->view, $this->writer, $this->file, $this->options);
+        $this->injectScaffolds();
+        $this->archives = new Archives(
+            $this->view,
+            $this->writer,
+            $this->file,
+            $this->options
+        );
         $this->compiler->getEventManager()->attach($this->archives);
     }
 
-    public function testCreatesNoFilesPriorToCompilation()
+    public function testCreatesNoFilesPriorToCompilation(): void
     {
         $this->archives->compile();
-        $this->assertTrue(empty($this->writer->files));
+        self::assertEmpty($this->writer->files);
     }
 
-    public function testCreatesFilesFollowingCompilation()
+    public function testCreatesFilesFollowingCompilation(): void
     {
         $this->compiler->compile();
         $this->archives->createArchivePages();
 
         $expected = ceil(count($this->metadata) / 10);
-        $this->assertEquals($expected, count($this->writer->files));
+        self::assertCount($expected, $this->writer->files);
 
         $count = 1;
         foreach ($this->writer->files as $filename => $content) {
-            if ($count == 1) {
+            if ($count === 1) {
                 continue;
             }
-            $this->assertContains('-p' . $count, $filename);
-            $this->assertContains('Previous', $content);
+            self::assertStringContainsString('-p' . $count, $filename);
+            self::assertContains('Previous', $content);
             $count++;
         }
     }
 
-    public function testCreatesFeedsFollowingCompilation()
+    public function testCreatesFeedsFollowingCompilation(): void
     {
         $this->compiler->compile();
         $this->archives->compile();
 
-        $this->assertFalse(empty($this->writer->files));
+        self::assertNotEmpty($this->writer->files);
 
         $feedFilenameTemplate = $this->options->getFeedFilename();
         $title                = $this->options->getFeedTitle();
-        foreach (array('atom', 'rss') as $type) {
+        foreach (['atom', 'rss'] as $type) {
             $filename = sprintf($feedFilenameTemplate, $type);
-            $this->assertArrayHasKey($filename, $this->writer->files);
-            $this->assertContains($title, $this->writer->files[$filename]);
+            self::assertArrayHasKey($filename, $this->writer->files);
+            self::assertStringContainsString(
+                $title,
+                $this->writer->files[$filename]
+            );
         }
     }
 }

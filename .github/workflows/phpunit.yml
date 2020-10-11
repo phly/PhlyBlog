@@ -1,0 +1,48 @@
+# https://help.github.com/en/categories/automating-your-workflow-with-github-actions
+
+name: "PHPUnit tests"
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  phpunit:
+    name: "PHPUnit tests"
+
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          coverage: "pcov"
+          php-version: "7.3"
+          ini-values: memory_limit=-1
+
+      - name: "Cache dependencies"
+        uses: "actions/cache@v2"
+        with:
+          path: |
+            ~/.composer/cache
+            vendor
+          key: "${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}"
+          restore-keys: "${{ runner.os }}-composer-"
+
+      - name: "Install highest dependencies"
+        run: "composer update --no-interaction --no-progress --no-suggest"
+
+      - name: "Tests"
+        run: "vendor/bin/phpunit --coverage-clover=clover.xml --coverage-text"
+
+      - name: "Monitor coverage"
+        if: github.event_name == 'pull_request'
+        uses: slavcodev/coverage-monitor-action@1.2.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          clover_file: "clover.xml"
+          threshold_alert: 70
+          threshold_warning: 72

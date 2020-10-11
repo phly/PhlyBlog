@@ -1,25 +1,29 @@
 <?php
+
 namespace PhlyBlog\Compiler\Listener;
 
 use DomainException;
 use PhlyBlog\Compiler\Event;
 use PhlyBlog\Compiler\SortedEntries;
 
+use function iterator_to_array;
+use function sprintf;
+
 class ByYear extends AbstractList
 {
-    protected $years = array();
+    protected $years = [];
 
     public function onCompile(Event $e)
     {
         $entry = $e->getEntry();
-        if (!$entry->isPublic()) {
+        if (! $entry->isPublic()) {
             return;
         }
 
         $date = $e->getDate();
         $year = $date->format('Y');
 
-        if (!isset($this->years[$year])) {
+        if (! isset($this->years[$year])) {
             $this->years[$year] = new SortedEntries();
         }
         $this->years[$year]->insert($entry, $entry->getCreated());
@@ -54,7 +58,7 @@ class ByYear extends AbstractList
             $this->iterateAndRenderList(
                 $list,
                 $filenameTemplate,
-                array($year),
+                [$year],
                 sprintf($titleTemplate, $year),
                 $urlTemplate,
                 $year,

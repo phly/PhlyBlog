@@ -1,8 +1,9 @@
 <?php
+
 namespace PhlyBlog;
 
-use PhlyCommon\Entity as EntityDefinition;
 use Laminas\InputFilter\InputFilterInterface;
+use PhlyCommon\Entity as EntityDefinition;
 
 class AuthorEntity implements EntityDefinition
 {
@@ -19,14 +20,14 @@ class AuthorEntity implements EntityDefinition
      * This is a "short name" identifier for the author.
      *
      * @param  string id
-     * @return AuthorEntity
+     * @return $this
      */
     public function setId($id)
     {
         $this->id = (string) $id;
         return $this;
     }
-    
+
     /**
      * Get value for id
      *
@@ -43,14 +44,14 @@ class AuthorEntity implements EntityDefinition
      * Set full name of author
      *
      * @param  string name
-     * @return AuthorEntity
+     * @return $this
      */
     public function setName($name)
     {
         $this->name = (string) $name;
         return $this;
     }
-    
+
     /**
      * Get name
      *
@@ -65,14 +66,14 @@ class AuthorEntity implements EntityDefinition
      * Set email
      *
      * @param  string email
-     * @return AuthorEntity
+     * @return $this
      */
     public function setEmail($email)
     {
         $this->email = (string) $email;
         return $this;
     }
-    
+
     /**
      * Get email
      *
@@ -87,14 +88,14 @@ class AuthorEntity implements EntityDefinition
      * Set author url
      *
      * @param  string url
-     * @return AuthorEntity
+     * @return $this
      */
     public function setUrl($url)
     {
         $this->url = (string) $url;
         return $this;
     }
-    
+
     /**
      * Get author url
      *
@@ -137,24 +138,23 @@ class AuthorEntity implements EntityDefinition
 
     /**
      * Cast object to array
-     * 
+     *
      * @return array
      */
     public function toArray()
     {
-        return array(
+        return [
             'id'    => $this->getId(),
             'name'  => $this->getName(),
             'email' => $this->getEmail(),
             'url'   => $this->getUrl(),
-        );
+        ];
     }
 
     /**
      * Populate object from array
-     * 
-     * @param  array $array 
-     * @return AuthorEntity
+     *
+     * @return $this
      */
     public function fromArray(array $array)
     {

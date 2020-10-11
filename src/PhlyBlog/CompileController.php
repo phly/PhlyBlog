@@ -1,17 +1,31 @@
 <?php
+
 namespace PhlyBlog;
 
-use RuntimeException;
 use Laminas\Console\Adapter\AdapterInterface as Console;
 use Laminas\Console\ColorInterface as Color;
 use Laminas\Console\Request as ConsoleRequest;
 use Laminas\EventManager\EventManagerInterface;
 use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Stdlib\ArrayUtils;
 use Laminas\View\View;
+use RuntimeException;
+use Traversable;
+
+use function array_merge;
+use function call_user_func;
+use function get_class;
+use function gettype;
+use function is_array;
+use function is_callable;
+use function is_object;
+use function sprintf;
+use function str_repeat;
+use function strlen;
 
 class CompileController extends AbstractActionController
 {
-    public $config = array();
+    public $config = [];
     public $view;
 
     protected $compiler;
@@ -20,27 +34,30 @@ class CompileController extends AbstractActionController
     protected $responseFile;
     protected $writer;
 
-    protected $defaultOptions = array(
-        'all'     => true,
-        'entries' => false,
-        'archive' => false,
-        'year'    => false,
-        'month'   => false,
-        'day'     => false,
-        'tag'     => false,
-        'author'  => false,
-    );
+    protected $defaultOptions
+        = [
+            'all'     => true,
+            'entries' => false,
+            'archive' => false,
+            'year'    => false,
+            'month'   => false,
+            'day'     => false,
+            'tag'     => false,
+            'author'  => false,
+        ];
 
     public function setConfig($config)
     {
         if ($config instanceof Traversable) {
             $config = ArrayUtils::iteratorToArray($config);
         }
-        if (!is_array($config)) {
-            throw new RuntimeException(sprintf(
-                'Expected array or Traversable PhlyBlog configuration; received %s',
-                (is_object($config) ? get_class($config) : gettype($config))
-            ));
+        if (! is_array($config)) {
+            throw new RuntimeException(
+                sprintf(
+                    'Expected array or Traversable PhlyBlog configuration; received %s',
+                    is_object($config) ? get_class($config) : gettype($config)
+                )
+            );
         }
         $this->config = $config;
     }
@@ -68,20 +85,21 @@ class CompileController extends AbstractActionController
     public function getFlags()
     {
         $options = $this->params()->fromRoute();
-        $test = array(
-            array('long' => 'all',     'short' => 'a'),
-            array('long' => 'entries', 'short' => 'e'),
-            array('long' => 'archive', 'short' => 'c'),
-            array('long' => 'year',    'short' => 'y'),
-            array('long' => 'month',   'short' => 'm'),
-            array('long' => 'day',     'short' => 'd'),
-            array('long' => 'tag',     'short' => 't'),
-            array('long' => 'author',  'short' => 'r'),
-        );
+        $test    = [
+            ['long' => 'all', 'short' => 'a'],
+            ['long' => 'entries', 'short' => 'e'],
+            ['long' => 'archive', 'short' => 'c'],
+            ['long' => 'year', 'short' => 'y'],
+            ['long' => 'month', 'short' => 'm'],
+            ['long' => 'day', 'short' => 'd'],
+            ['long' => 'tag', 'short' => 't'],
+            ['long' => 'author', 'short' => 'r'],
+        ];
         foreach ($test as $spec) {
             $long  = $spec['long'];
             $short = $spec['short'];
-            if ((!isset($options[$long]) || !$options[$long]) 
+            if (
+                (! isset($options[$long]) || ! $options[$long])
                 && (isset($options[$short]) && $options[$short])
             ) {
                 $options[$long] = true;
@@ -90,7 +108,8 @@ class CompileController extends AbstractActionController
         }
 
         $options = array_merge($this->defaultOptions, $options);
-        if ($options['entries']
+        if (
+            $options['entries']
             || $options['archive']
             || $options['year']
             || $options['month']
@@ -149,7 +168,7 @@ class CompileController extends AbstractActionController
         $responseStrategy = new Compiler\ResponseStrategy($writer, $responseFile, $view);
         $postFiles        = new Compiler\PhpFileFilter($this->config['posts_path']);
 
-        $this->compiler   = new Compiler($postFiles);
+        $this->compiler = new Compiler($postFiles);
         return $this->compiler;
     }
 
@@ -162,7 +181,7 @@ class CompileController extends AbstractActionController
 
     public function attachListeners(array $flags, $tags)
     {
-        $listeners    = array();
+        $listeners    = [];
         $view         = $this->view;
         $compiler     = $this->getCompiler();
         $writer       = $this->getWriter();
@@ -215,7 +234,7 @@ class CompileController extends AbstractActionController
     public function compileAction()
     {
         $request = $this->getRequest();
-        if (!$request instanceof ConsoleRequest) {
+        if (! $request instanceof ConsoleRequest) {
             throw new RuntimeException(sprintf(
                 '%s may only be called from the console',
                 __METHOD__
@@ -234,13 +253,23 @@ class CompileController extends AbstractActionController
         $this->reportDone($width, 29);
 
         // Create tag cloud
-        if ($this->config['cloud_callback'] 
+        if (
+            $this->config['cloud_callback']
             && is_callable($this->config['cloud_callback'])
         ) {
             $callable = $this->config['cloud_callback'];
-            $this->console->write("Creating and rendering tag cloud", Color::BLUE);
+            $this->console->write(
+                "Creating and rendering tag cloud",
+                Color::BLUE
+            );
             $cloud = $tags->getTagCloud();
-            call_user_func($callable, $cloud, $this->view, $this->config, $this->getServiceLocator());
+            call_user_func(
+                $callable,
+                $cloud,
+                $this->view,
+                $this->config,
+                $this->getServiceLocator()
+            );
             $this->reportDone($width, 32);
         }
 

@@ -1,25 +1,32 @@
 <?php
+
 namespace PhlyBlog\Compiler\Listener;
 
 use DomainException;
 use PhlyBlog\Compiler\Event;
 use PhlyBlog\Compiler\SortedEntries;
 
+use function date;
+use function explode;
+use function iterator_to_array;
+use function sprintf;
+use function strtotime;
+
 class ByMonth extends AbstractList
 {
-    protected $months = array();
+    protected $months = [];
 
     public function onCompile(Event $e)
     {
         $entry = $e->getEntry();
-        if (!$entry->isPublic()) {
+        if (! $entry->isPublic()) {
             return;
         }
 
         $date  = $e->getDate();
         $month = $date->format('Y/m');
 
-        if (!isset($this->months[$month])) {
+        if (! isset($this->months[$month])) {
             $this->months[$month] = new SortedEntries();
         }
         $this->months[$month]->insert($entry, $entry->getCreated());
@@ -52,13 +59,17 @@ class ByMonth extends AbstractList
 
         foreach ($this->months as $month => $list) {
             // Get the year and month digits
-            list($year, $monthDigit) = explode('/', $month, 2);
+            [$year, $monthDigit] = explode('/', $month, 2);
 
             $this->iterateAndRenderList(
                 $list,
                 $filenameTemplate,
-                array($month),
-                sprintf($titleTemplate, date('F', strtotime($year . '-' . $monthDigit . '-01')) . ' ' . $year),
+                [$month],
+                sprintf(
+                    $titleTemplate,
+                    date('F', strtotime($year . '-' . $monthDigit . '-01'))
+                    . ' ' . $year
+                ),
                 $urlTemplate,
                 $month,
                 $template

@@ -1,25 +1,32 @@
 <?php
+
 namespace PhlyBlog\Compiler\Listener;
 
 use DomainException;
 use PhlyBlog\Compiler\Event;
 use PhlyBlog\Compiler\SortedEntries;
 
+use function date;
+use function explode;
+use function iterator_to_array;
+use function sprintf;
+use function strtotime;
+
 class ByDate extends AbstractList
 {
-    protected $days = array();
+    protected $days = [];
 
     public function onCompile(Event $e)
     {
         $entry = $e->getEntry();
-        if (!$entry->isPublic()) {
+        if (! $entry->isPublic()) {
             return;
         }
 
         $date = $e->getDate();
         $day  = $date->format('Y/m/d');
 
-        if (!isset($this->days[$day])) {
+        if (! isset($this->days[$day])) {
             $this->days[$day] = new SortedEntries();
         }
         $this->days[$day]->insert($entry, $entry->getCreated());
@@ -52,13 +59,19 @@ class ByDate extends AbstractList
 
         foreach ($this->days as $day => $list) {
             // Get the year, month, and day digits
-            list($year, $month, $date) = explode('/', $day, 3);
+            [$year, $month, $date] = explode('/', $day, 3);
 
             $this->iterateAndRenderList(
                 $list,
                 $filenameTemplate,
-                array($day),
-                sprintf($titleTemplate, $date . ' ' . date('F', strtotime($year . '-' . $month . '-' . $date)) . ' ' . $year),
+                [$day],
+                sprintf(
+                    $titleTemplate,
+                    $date . ' ' . date(
+                        'F',
+                        strtotime($year . '-' . $month . '-' . $date)
+                    ) . ' ' . $year
+                ),
                 $urlTemplate,
                 $day,
                 $template

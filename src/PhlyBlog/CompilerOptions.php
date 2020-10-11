@@ -1,6 +1,8 @@
 <?php
+
 namespace PhlyBlog;
 
+use InvalidArgumentException;
 use Laminas\Stdlib\AbstractOptions;
 use Laminas\Uri\UriFactory;
 
@@ -32,7 +34,6 @@ class CompilerOptions extends AbstractOptions
         return $this->entryFilenameTemplate;
     }
 
-
     /* Used everywhere */
     protected $entryLinkTemplate = '/blog/%s.html';
 
@@ -60,7 +61,6 @@ class CompilerOptions extends AbstractOptions
     {
         return $this->feedHostname;
     }
-
 
     protected $entriesTemplate;
 
@@ -153,7 +153,7 @@ class CompilerOptions extends AbstractOptions
         return $this->feedFeedLink;
     }
 
-    protected $feedTitle    = 'Blog';
+    protected $feedTitle = 'Blog';
 
     public function setFeedTitle($feedTitle)
     {
@@ -165,7 +165,6 @@ class CompilerOptions extends AbstractOptions
     {
         return $this->feedTitle;
     }
-
 
     protected $byYearTemplate;
 
@@ -279,7 +278,6 @@ class CompilerOptions extends AbstractOptions
         return $this->byMonthTitle;
     }
 
-
     protected $byDayTemplate;
 
     public function setByDayTemplate($byDayTemplate)
@@ -336,7 +334,6 @@ class CompilerOptions extends AbstractOptions
         return $this->byDayTitle;
     }
 
-
     protected $byTagTemplate;
 
     public function setByTagTemplate($byTagTemplate)
@@ -392,7 +389,6 @@ class CompilerOptions extends AbstractOptions
     {
         return $this->byTagTitle;
     }
-
 
     protected $tagFeedFilenameTemplate = 'blog/tag/%s-%s.xml';
 
@@ -554,7 +550,6 @@ class CompilerOptions extends AbstractOptions
         return $this->authorFeedTitleTemplate;
     }
 
-
     protected $tagCloudUrlTemplate = '/blog/tag/%s.html';
 
     public function setTagCloudUrlTemplate($tagCloudUrlTemplate)
@@ -568,7 +563,7 @@ class CompilerOptions extends AbstractOptions
         return $this->tagCloudUrlTemplate;
     }
 
-    protected $tagCloudOptions = array();
+    protected $tagCloudOptions = [];
 
     public function setTagCloudOptions(array $tagCloudOptions)
     {
@@ -581,14 +576,15 @@ class CompilerOptions extends AbstractOptions
         return $this->tagCloudOptions;
     }
 
-
     protected $paginatorItemCountPerPage = 10;
 
     public function setPaginatorItemCountPerPage($paginatorItemCountPerPage)
     {
         $paginatorItemCountPerPage = (int) $paginatorItemCountPerPage;
         if ($paginatorItemCountPerPage < 1) {
-            throw new \InvalidArgumentException('Paginator item count per page must be at least 1');
+            throw new InvalidArgumentException(
+                'Paginator item count per page must be at least 1'
+            );
         }
         $this->paginatorItemCountPerPage = (int) $paginatorItemCountPerPage;
         return $this;
@@ -605,7 +601,9 @@ class CompilerOptions extends AbstractOptions
     {
         $paginatorPageRange = (int) $paginatorPageRange;
         if ($paginatorPageRange < 2) {
-            throw new \InvalidArgumentException('Paginator page range must be >= 2');
+            throw new InvalidArgumentException(
+                'Paginator page range must be >= 2'
+            );
         }
         $this->paginatorPageRange = (int) $paginatorPageRange;
         return $this;
@@ -615,7 +613,6 @@ class CompilerOptions extends AbstractOptions
     {
         return $this->paginatorPageRange;
     }
-
 
     protected $feedAuthorName = '';
 
@@ -643,13 +640,15 @@ class CompilerOptions extends AbstractOptions
         return $this->feedAuthorEmail;
     }
 
-    protected $feedAuthorUri = null;
+    protected $feedAuthorUri;
 
     public function setFeedAuthorUri($feedAuthorUri)
     {
         $uri = UriFactory::factory($feedAuthorUri);
-        if (!$uri->isValid()) {
-            throw new \InvalidArgumentException('Author URI for feed is invalid');
+        if (! $uri->isValid()) {
+            throw new InvalidArgumentException(
+                'Author URI for feed is invalid'
+            );
         }
         $this->feedAuthorUri = $feedAuthorUri;
         return $this;

@@ -1,16 +1,23 @@
 <?php
+
 namespace PhlyBlog\Compiler;
 
-use SplPriorityQueue;
+use InvalidArgumentException;
 use PhlyBlog\EntryEntity;
+use SplPriorityQueue;
+
+use function get_class;
+use function gettype;
+use function is_object;
+use function sprintf;
 
 class SortedEntries extends SplPriorityQueue
 {
     /**
      * Sorting on timestamps
-     * 
-     * @param  int $priority1 
-     * @param  int $priority2 
+     *
+     * @param  int $priority1
+     * @param  int $priority2
      * @return int
      */
     public function compare($priority1, $priority2)
@@ -27,11 +34,11 @@ class SortedEntries extends SplPriorityQueue
 
     public function insert($data, $priority)
     {
-        if (!$data instanceof EntryEntity) {
+        if (! $data instanceof EntryEntity) {
             throw new InvalidArgumentException(sprintf(
                 '%s expects an EntryEntity; received %s',
                 __METHOD__,
-                (is_object($data) ? get_class($data) : gettype($data))
+                is_object($data) ? get_class($data) : gettype($data)
             ));
         }
         parent::insert($data, $priority);

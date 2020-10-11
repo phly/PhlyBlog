@@ -1,7 +1,12 @@
 <?php
+
 namespace PhlyBlog\Compiler;
 
 use Laminas\View\View;
+
+use function preg_match;
+use function preg_replace;
+use function str_replace;
 
 class ResponseStrategy
 {
@@ -13,7 +18,7 @@ class ResponseStrategy
         $this->writer = $writer;
         $this->file   = $file;
 
-        $view->addResponseStrategy(array($this, 'onResponse'));
+        $view->addResponseStrategy([$this, 'onResponse']);
     }
 
     public function onResponse($e)

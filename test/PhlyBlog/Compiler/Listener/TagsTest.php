@@ -1,70 +1,91 @@
 <?php
-namespace PhlyBlog\Compiler\Listener;
 
-use PHPUnit_Framework_TestCase as TestCase;
+namespace PhlyBlogTest\Compiler\Listener;
+
+use Laminas\Tag\Cloud;
+use PhlyBlog\Compiler\Listener\Tags;
+use PHPUnit\Framework\TestCase;
+
+use function sprintf;
+use function str_replace;
 
 class TagsTest extends TestCase
 {
-    public function setUp()
+    use TestHelper;
+
+    /** @var Tags */
+    private $tags;
+
+    protected function setUp(): void
     {
-        TestHelper::injectScaffolds($this);
-        $this->tags = new Tags($this->view, $this->writer, $this->file, $this->options);
+        $this->injectScaffolds();
+        $this->tags = new Tags(
+            $this->view,
+            $this->writer,
+            $this->file,
+            $this->options
+        );
         $this->compiler->getEventManager()->attach($this->tags);
     }
 
-    public function testCreatesNoFilesPriorToCompilation()
+    public function testCreatesNoFilesPriorToCompilation(): void
     {
         $this->tags->compile();
-        $this->assertTrue(empty($this->writer->files));
+        self::assertEmpty($this->writer->files);
     }
 
-    public function testCreatesFilesFollowingCompilation()
+    public function testCreatesFilesFollowingCompilation(): void
     {
         $this->compiler->compile();
         $this->tags->createTagPages();
 
-        $this->assertFalse(empty($this->writer->files));
+        self::assertNotEmpty($this->writer->files);
 
         $filenameTemplate = $this->options->getByTagFilenameTemplate();
         $filenameTemplate = str_replace('-p%d', '', $filenameTemplate);
         $tagTitleTemplate = $this->options->getByTagTitle();
         foreach ($this->expected['tags'] as $tag) {
             $filename = sprintf($filenameTemplate, $tag);
-            $this->assertArrayHasKey($filename, $this->writer->files);
+            self::assertArrayHasKey($filename, $this->writer->files);
             $tagTitle = sprintf($tagTitleTemplate, $tag);
-            $this->assertContains($tagTitle, $this->writer->files[$filename]);
+            self::assertStringContainsString(
+                $tagTitle,
+                $this->writer->files[$filename]
+            );
         }
     }
 
-    public function testCreatesFeedsFollowingCompilation()
+    public function testCreatesFeedsFollowingCompilation(): void
     {
         $this->compiler->compile();
         $this->tags->createTagFeeds('atom');
         $this->tags->createTagFeeds('rss');
 
-        $this->assertFalse(empty($this->writer->files));
+        self::assertNotEmpty($this->writer->files);
 
         $filenameTemplate = $this->options->getTagFeedFilenameTemplate();
         $tagTitleTemplate = $this->options->getTagFeedTitleTemplate();
-        foreach (array('atom', 'rss') as $type) {
+        foreach (['atom', 'rss'] as $type) {
             foreach ($this->expected['tags'] as $tag) {
                 $filename = sprintf($filenameTemplate, $tag, $type);
-                $this->assertArrayHasKey($filename, $this->writer->files);
+                self::assertArrayHasKey($filename, $this->writer->files);
                 $tagTitle = sprintf($tagTitleTemplate, $tag);
-                $this->assertContains($tagTitle, $this->writer->files[$filename]);
+                self::assertStringContainsString(
+                    $tagTitle,
+                    $this->writer->files[$filename]
+                );
             }
         }
     }
 
-    public function testCanCreateTagCloudFollowingCompilation()
+    public function testCanCreateTagCloudFollowingCompilation(): void
     {
         $this->compiler->compile();
         $cloud = $this->tags->getTagCloud();
-        $this->assertInstanceOf('Laminas\Tag\Cloud', $cloud);
+        self::assertInstanceOf(Cloud::class, $cloud);
         $markup = $cloud->render();
         foreach ($this->expected['tags'] as $tag) {
-            $this->assertContains($tag, $markup);
+            self::assertStringContainsString($tag, $markup);
         }
     }
 }
-

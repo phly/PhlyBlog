@@ -1,21 +1,29 @@
 <?php
+
 namespace PhlyBlog\Compiler\Listener;
 
-use InvalidArgumentException;
 use DomainException;
+use InvalidArgumentException;
 use PhlyBlog\AuthorEntity;
 use PhlyBlog\Compiler\Event;
 use PhlyBlog\Compiler\SortedEntries;
 
+use function in_array;
+use function is_string;
+use function iterator_to_array;
+use function sprintf;
+use function str_replace;
+use function strtolower;
+
 class Authors extends AbstractList
 {
-    protected $authors = array();
+    protected $authors = [];
     protected $entries;
 
     public function onCompile(Event $e)
     {
         $entry = $e->getEntry();
-        if (!$entry->isPublic()) {
+        if (! $entry->isPublic()) {
             return;
         }
 
@@ -23,17 +31,17 @@ class Authors extends AbstractList
         if ($author instanceof AuthorEntity) {
             // If we have an AuthorEntity, populate our authors array with it
             $authorName = $author->getId();
-            if (!isset($this->authors[$authorName]) || is_string($this->authors[$authorName])) {
+            if (! isset($this->authors[$authorName]) || is_string($this->authors[$authorName])) {
                 $this->authors[$authorName] = $author;
             }
             $author = $authorName;
         } else {
             // only populate our authors array if we cannot find another
-            if (!isset($this->authors[$author])) {
+            if (! isset($this->authors[$author])) {
                 $this->authors[$author] = $author;
             }
         }
-        if (!isset($this->entries[$author])) {
+        if (! isset($this->entries[$author])) {
             $this->entries[$author] = new SortedEntries();
         }
         $this->entries[$author]->insert($entry, $entry->getCreated());
@@ -55,7 +63,7 @@ class Authors extends AbstractList
 
     public function createAuthorPages($template = null)
     {
-        if (!$this->entries) {
+        if (! $this->entries) {
             return;
         }
 
@@ -82,7 +90,7 @@ class Authors extends AbstractList
             $this->iterateAndRenderList(
                 $list,
                 $filenameTemplate,
-                array($author),
+                [$author],
                 $title,
                 $urlTemplate,
                 $author,
@@ -93,13 +101,15 @@ class Authors extends AbstractList
 
     public function createAuthorFeeds($type)
     {
-        if (!$this->entries) {
+        if (! $this->entries) {
             return;
         }
 
         $type = strtolower($type);
-        if (!in_array($type, array('atom', 'rss'))) {
-            throw new InvalidArgumentException('Feed type must be "atom" or "rss"');
+        if (! in_array($type, ['atom', 'rss'])) {
+            throw new InvalidArgumentException(
+                'Feed type must be "atom" or "rss"'
+            );
         }
 
         $filenameTemplate = $this->options->getAuthorFeedFilenameTemplate();

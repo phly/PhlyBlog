@@ -4,6 +4,10 @@ namespace PhlyBlog\Filter;
 
 use Laminas\Filter\FilterInterface;
 
+use function preg_replace;
+use function strtolower;
+use function trim;
+
 class Permalink implements FilterInterface
 {
     public function filter($value)

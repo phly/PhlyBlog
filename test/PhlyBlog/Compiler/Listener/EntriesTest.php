@@ -1,24 +1,33 @@
 <?php
-namespace PhlyBlog\Compiler\Listener;
 
-use PHPUnit_Framework_TestCase as TestCase;
+namespace PhlyBlogTest\Compiler\Listener;
+
+use PhlyBlog\Compiler\Listener\Entries;
+use PHPUnit\Framework\TestCase;
+
+use function sprintf;
 
 class EntriesTest extends TestCase
 {
-    public function setUp()
+    use TestHelper;
+
+    /** @var Entries */
+    private $entries;
+
+    protected function setUp(): void
     {
-        TestHelper::injectScaffolds($this);
+        $this->injectScaffolds();
         $this->entries = new Entries($this->view, $this->file, $this->options);
         $this->compiler->getEventManager()->attach($this->entries);
     }
 
-    public function testCreatesNoFilesPriorToCompilation()
+    public function testCreatesNoFilesPriorToCompilation(): void
     {
         $this->entries->createEntries();
-        $this->assertTrue(empty($this->writer->files));
+        self::assertEmpty($this->writer->files);
     }
 
-    public function testCanCreateFilesFollowingCompilation()
+    public function testCanCreateFilesFollowingCompilation(): void
     {
         $expected = 0;
         foreach ($this->metadata as $entry) {
@@ -29,10 +38,10 @@ class EntriesTest extends TestCase
         }
         $this->compiler->compile();
         $this->entries->createEntries();
-        $this->assertEquals($expected, count($this->writer->files));
+        self::assertCount($expected, $this->writer->files);
     }
 
-    public function testFilesCreatedContainExpectedArtifacts()
+    public function testFilesCreatedContainExpectedArtifacts(): void
     {
         $this->compiler->compile();
         $this->entries->createEntries();
@@ -45,9 +54,9 @@ class EntriesTest extends TestCase
             $id = $entry['id'];
 
             $filename = sprintf($filenameTemplate, $id);
-            $this->assertArrayHasKey($filename, $this->writer->files);
+            self::assertArrayHasKey($filename, $this->writer->files);
             $content = $this->writer->files[$filename];
-            $this->assertContains($entry['title'], $content);
+            self::assertStringContainsString($entry['title'], $content);
         }
     }
 }

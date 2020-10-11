@@ -1,12 +1,13 @@
 <?php
+
 namespace PhlyBlog;
 
 use DateTime;
-use DateTimezone;
-use Laminas\Console\Exception as ConsoleException;
+use DateTimeZone;
+use Laminas\EventManager\EventManager;
 use Laminas\EventManager\EventManagerAwareInterface;
 use Laminas\EventManager\EventManagerInterface;
-use Laminas\EventManager\EventManager;
+use RuntimeException;
 
 class Compiler implements EventManagerAwareInterface
 {
@@ -15,22 +16,24 @@ class Compiler implements EventManagerAwareInterface
 
     public function __construct(Compiler\PhpFileFilter $files)
     {
-        $this->files  = $files;
+        $this->files = $files;
     }
 
     public function setEventManager(EventManagerInterface $events)
     {
-        $events->setIdentifiers(array(
-            __CLASS__,
-            get_called_class(),
-        ));
+        $events->setIdentifiers(
+            [
+                self::class,
+                static::class,
+            ]
+        );
         $this->events = $events;
         return $this;
     }
 
     public function getEventManager()
     {
-        if (!$this->events) {
+        if (! $this->events) {
             $this->setEventManager(new EventManager());
         }
         return $this->events;
@@ -38,7 +41,7 @@ class Compiler implements EventManagerAwareInterface
 
     /**
      * Prepare the list of entries
-     * 
+     *
      * Loops through the filesystem tree, looking for PHP files
      * that return EntryEntity objects. For each returned, adds it
      * to:
@@ -49,8 +52,6 @@ class Compiler implements EventManagerAwareInterface
      * - $byDay, a hash of year-month-day/SortedEntries pairs
      * - $byTag, a hash of tag/SortedEntries pairs
      * - $byAuthor, a hash of author/SortedEntries pairs
-     *
-     * @return void
      */
     public function compile()
     {
@@ -59,13 +60,13 @@ class Compiler implements EventManagerAwareInterface
 
         foreach ($this->files as $file) {
             $entry = include $file->getRealPath();
-            if (!$entry instanceof EntryEntity) {
+            if (! $entry instanceof EntryEntity) {
                 continue;
             }
 
             if (! $entry->isValid()) {
                 // If we have an invalid entry, we should not continue
-                throw new ConsoleException\RuntimeException(sprintf(
+                throw new RuntimeException(sprintf(
                     "Not valid post file: \n%s",
                     implode("\n", array_map(function (array $errorMessages) {
                         $message = array_shift($errorMessages);
@@ -80,7 +81,7 @@ class Compiler implements EventManagerAwareInterface
 
             $date = new DateTime();
             $date->setTimestamp($entry->getCreated())
-                 ->setTimezone(new DateTimezone($entry->getTimezone()));
+                ->setTimezone(new DateTimeZone($entry->getTimezone()));
 
             $event->setEntry($entry);
             $event->setDate($date);

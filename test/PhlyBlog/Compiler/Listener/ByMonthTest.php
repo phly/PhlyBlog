@@ -1,58 +1,81 @@
 <?php
-namespace PhlyBlog\Compiler\Listener;
+
+namespace PhlyBlogTest\Compiler\Listener;
 
 use DateTime;
-use DateTimezone;
-use PHPUnit_Framework_TestCase as TestCase;
+use DateTimeZone;
+use PhlyBlog\Compiler\Listener\ByMonth;
+use PHPUnit\Framework\TestCase;
+
+use function sprintf;
+use function str_replace;
 
 class ByMonthTest extends TestCase
 {
-    public function setUp()
+    use TestHelper;
+
+    /** @var ByMonth */
+    private $byMonth;
+    /** @var array */
+    private $months;
+
+    protected function setUp(): void
     {
-        TestHelper::injectScaffolds($this);
-        $this->byMonth = new ByMonth($this->view, $this->writer, $this->file, $this->options);
+        $this->injectScaffolds();
+        $this->byMonth = new ByMonth(
+            $this->view,
+            $this->writer,
+            $this->file,
+            $this->options
+        );
         $this->compiler->getEventManager()->attach($this->byMonth);
 
-        $this->months = array();
-        $self = $this;
-        $this->compiler->getEventManager()->attach('compile', function($e) use ($self) {
-            $entry = $e->getEntry();
-            if ($entry->isDraft() || !$entry->isPublic()) {
-                return;
-            }
+        $this->months = [];
+        $self         = $this;
+        $this->compiler->getEventManager()->attach(
+            'compile',
+            function ($e) use ($self) {
+                $entry = $e->getEntry();
+                if ($entry->isDraft() || ! $entry->isPublic()) {
+                    return;
+                }
 
-            $created = $entry->getCreated();
-            $tz      = $entry->getTimezone();
-            $date    = new DateTime();
-            $date->setTimezone(new DateTimezone($tz));
-            $date->setTimestamp($created);
-            $month   = $date->format('Y/m');
-            $self->months[$month] = $date;
-        });
+                $created = $entry->getCreated();
+                $tz      = $entry->getTimezone();
+                $date    = new DateTime();
+                $date->setTimezone(new DateTimeZone($tz));
+                $date->setTimestamp($created);
+                $month                = $date->format('Y/m');
+                $self->months[$month] = $date;
+            }
+        );
     }
 
-    public function testCreatesNoFilesPriorToCompilation()
+    public function testCreatesNoFilesPriorToCompilation(): void
     {
         $this->byMonth->compile();
-        $this->assertTrue(empty($this->writer->files));
+        self::assertEmpty($this->writer->files);
     }
 
-    public function testCreatesFilesFollowingCompilation()
+    public function testCreatesFilesFollowingCompilation(): void
     {
         $this->compiler->compile();
         $this->byMonth->compile();
 
-        $this->assertFalse(empty($this->writer->files));
-        $this->assertFalse(empty($this->months));
+        self::assertNotEmpty($this->writer->files);
+        self::assertNotEmpty($this->months);
 
-        $filenameTemplate = $this->options->getByMonthFilenameTemplate();
-        $filenameTemplate = str_replace('-p%d', '', $filenameTemplate);
+        $filenameTemplate   = $this->options->getByMonthFilenameTemplate();
+        $filenameTemplate   = str_replace('-p%d', '', $filenameTemplate);
         $monthTitleTemplate = $this->options->getByMonthTitle();
         foreach ($this->months as $month => $date) {
             $filename = sprintf($filenameTemplate, $month);
-            $this->assertArrayHasKey($filename, $this->writer->files);
+            self::assertArrayHasKey($filename, $this->writer->files);
             $monthTitle = sprintf($monthTitleTemplate, $date->format('F Y'));
-            $this->assertContains($monthTitle, $this->writer->files[$filename]);
+            self::assertStringContainsString(
+                $monthTitle,
+                $this->writer->files[$filename]
+            );
         }
     }
 }

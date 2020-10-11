@@ -1,23 +1,28 @@
 <?php
-namespace PhlyBlog\Compiler;
 
-use PHPUnit_Framework_TestCase as TestCase;
+namespace PhlyBlogTest\Compiler;
+
+use PhlyBlog\Compiler\ResponseFile;
+use PHPUnit\Framework\TestCase;
 
 class ResponseFileTest extends TestCase
 {
-    public function setUp()
+    /** @var ResponseFile */
+    private $file;
+
+    protected function setUp(): void
     {
         $this->file = new ResponseFile();
     }
 
-    public function testFilenameIsEmptyByDefault()
+    public function testFilenameIsEmptyByDefault(): void
     {
-        $this->assertNull($this->file->getFilename());
+        self::assertNull($this->file->getFilename());
     }
 
-    public function testFilenameIsMutable()
+    public function testFilenameIsMutable(): void
     {
         $this->file->setFilename('foo.bar');
-        $this->assertEquals('foo.bar', $this->file->getFilename());
+        self::assertEquals('foo.bar', $this->file->getFilename());
     }
 }
