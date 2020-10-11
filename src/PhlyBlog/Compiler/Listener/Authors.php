@@ -4,13 +4,13 @@ namespace PhlyBlog\Compiler\Listener;
 
 use DomainException;
 use InvalidArgumentException;
+use Laminas\Stdlib\ArrayUtils;
 use PhlyBlog\AuthorEntity;
 use PhlyBlog\Compiler\Event;
 use PhlyBlog\Compiler\SortedEntries;
 
 use function in_array;
 use function is_string;
-use function iterator_to_array;
 use function sprintf;
 use function str_replace;
 use function strtolower;
@@ -18,7 +18,7 @@ use function strtolower;
 class Authors extends AbstractList
 {
     protected $authors = [];
-    protected $entries;
+    protected $entries = [];
 
     public function onCompile(Event $e)
     {
@@ -50,7 +50,7 @@ class Authors extends AbstractList
     public function onCompileEnd(Event $e)
     {
         foreach ($this->entries as $author => $heap) {
-            $this->entries[$author] = iterator_to_array($heap);
+            $this->entries[$author] = ArrayUtils::iteratorToArray($heap);
         }
     }
 

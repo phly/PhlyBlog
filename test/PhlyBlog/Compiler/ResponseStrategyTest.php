@@ -8,8 +8,8 @@ use Laminas\View\View;
 use PhlyBlog\Compiler\ResponseFile;
 use PhlyBlog\Compiler\ResponseStrategy;
 use PhlyBlogTest\Compiler\TestAsset\MockWriter;
+use PhlyBlogTest\ReflectionUtil;
 use PHPUnit\Framework\TestCase;
-use ReflectionObject;
 
 use function reset;
 
@@ -83,11 +83,7 @@ class ResponseStrategyTest extends TestCase
 
     private function getResponseListeners(EventManagerInterface $events)
     {
-        $reflectionObject   = new ReflectionObject($events);
-        $reflectionProperty = $reflectionObject->getProperty('events');
-        $reflectionProperty->setAccessible(true);
-        $value = $reflectionProperty->getValue($events);
-        $reflectionProperty->setAccessible(false);
+        $value     = ReflectionUtil::getProperty($events, 'events');
         $listeners = $value['response'];
         $listeners = reset($listeners); // unwrap priorities
         $listeners = reset($listeners); // unwrap callables

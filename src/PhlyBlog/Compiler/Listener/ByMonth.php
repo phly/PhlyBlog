@@ -3,12 +3,12 @@
 namespace PhlyBlog\Compiler\Listener;
 
 use DomainException;
+use Laminas\Stdlib\ArrayUtils;
 use PhlyBlog\Compiler\Event;
 use PhlyBlog\Compiler\SortedEntries;
 
 use function date;
 use function explode;
-use function iterator_to_array;
 use function sprintf;
 use function strtotime;
 
@@ -35,7 +35,7 @@ class ByMonth extends AbstractList
     public function onCompileEnd(Event $e)
     {
         foreach ($this->months as $month => $heap) {
-            $this->months[$month] = iterator_to_array($heap);
+            $this->months[$month] = ArrayUtils::iteratorToArray($heap);
         }
     }
 

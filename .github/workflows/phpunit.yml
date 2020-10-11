@@ -45,4 +45,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           clover_file: "clover.xml"
           threshold_alert: 70
-          threshold_warning: 72
+          threshold_warning: 71

@@ -14,7 +14,6 @@ use RuntimeException;
 use Traversable;
 
 use function array_merge;
-use function call_user_func;
 use function get_class;
 use function gettype;
 use function is_array;
@@ -94,8 +93,8 @@ class CompileController extends AbstractActionController
             if ($config['view_callback'] && is_callable($config['view_callback'])) {
                 $callable = $config['view_callback'];
                 $view     = $controller->view;
-                $locator  = $controller->getServiceLocator();
-                call_user_func($callable, $view, $config, $locator);
+                $locator  = $this->container;
+                $callable($view, $config, $locator);
             }
         }, 100
         );
@@ -175,7 +174,7 @@ class CompileController extends AbstractActionController
         return $this->compilerOptions;
     }
 
-    public function getCompiler()
+    public function getCompiler(): Compiler
     {
         if ($this->compiler) {
             return $this->compiler;

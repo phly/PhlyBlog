@@ -15,7 +15,7 @@ use function sprintf;
 
 class Entries implements ListenerAggregateInterface
 {
-    protected $entries;
+    protected $entries   = [];
     protected $listeners = [];
     protected $options;
     protected $responseFile;
@@ -36,9 +36,8 @@ class Entries implements ListenerAggregateInterface
     public function detach(Events $events)
     {
         foreach ($this->listeners as $index => $listener) {
-            if ($events->detach($listener)) {
-                unset($this->listeners[$index]);
-            }
+            $events->detach($listener);
+            unset($this->listeners[$index]);
         }
     }
 

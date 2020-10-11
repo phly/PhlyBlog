@@ -3,8 +3,11 @@
 namespace PhlyBlogTest\Compiler\Listener;
 
 use PhlyBlog\Compiler\Listener\Entries;
+use PhlyBlogTest\ReflectionUtil;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
+use function count;
 use function sprintf;
 
 class EntriesTest extends TestCase
@@ -58,5 +61,22 @@ class EntriesTest extends TestCase
             $content = $this->writer->files[$filename];
             self::assertStringContainsString($entry['title'], $content);
         }
+    }
+
+    public function testDetachListener(): void
+    {
+        $currentListeners = ReflectionUtil::getProperty($this->entries, 'listeners');
+        if (count($currentListeners) !== 1) {
+            throw new RuntimeException(
+                sprintf(
+                    'Precondition failed: There should be exactly one listener attached, found %d',
+                    count($currentListeners)
+                )
+            );
+        }
+
+        $this->entries->detach($this->compiler->getEventManager());
+
+        self::assertCount(0, ReflectionUtil::getProperty($this->entries, 'listeners'));
     }
 }

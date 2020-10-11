@@ -3,10 +3,10 @@
 namespace PhlyBlog\Compiler\Listener;
 
 use DomainException;
+use Laminas\Stdlib\ArrayUtils;
 use PhlyBlog\Compiler\Event;
 use PhlyBlog\Compiler\SortedEntries;
 
-use function iterator_to_array;
 use function sprintf;
 
 class ByYear extends AbstractList
@@ -32,7 +32,7 @@ class ByYear extends AbstractList
     public function onCompileEnd(Event $e)
     {
         foreach ($this->years as $year => $heap) {
-            $this->years[$year] = iterator_to_array($heap);
+            $this->years[$year] = ArrayUtils::iteratorToArray($heap);
         }
     }
 

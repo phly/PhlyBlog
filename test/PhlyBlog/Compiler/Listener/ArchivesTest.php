@@ -3,7 +3,9 @@
 namespace PhlyBlogTest\Compiler\Listener;
 
 use PhlyBlog\Compiler\Listener\Archives;
+use PhlyBlogTest\ReflectionUtil;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 use function ceil;
 use function count;
@@ -70,5 +72,22 @@ class ArchivesTest extends TestCase
                 $this->writer->files[$filename]
             );
         }
+    }
+
+    public function testDetachListeners(): void
+    {
+        $currentListeners = ReflectionUtil::getProperty($this->archives, 'listeners');
+        if (count($currentListeners) !== 2) {
+            throw new RuntimeException(
+                sprintf(
+                    'Precondition failed: There should be exactly one listener attached, found %d',
+                    count($currentListeners)
+                )
+            );
+        }
+
+        $this->archives->detach($this->compiler->getEventManager());
+
+        self::assertCount(0, ReflectionUtil::getProperty($this->archives, 'listeners'));
     }
 }

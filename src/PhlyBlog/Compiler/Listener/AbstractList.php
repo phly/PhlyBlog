@@ -55,9 +55,8 @@ abstract class AbstractList implements ListenerAggregateInterface, ListenerInter
     public function detach(Events $events): void
     {
         foreach ($this->listeners as $index => $listener) {
-            if ($events->detach($listener)) {
-                unset($this->listeners[$index]);
-            }
+            $events->detach($listener);
+            unset($this->listeners[$index]);
         }
     }
 

@@ -4,11 +4,11 @@ namespace PhlyBlog\Compiler\Listener;
 
 use DomainException;
 use InvalidArgumentException;
+use Laminas\Stdlib\ArrayUtils;
 use PhlyBlog\Compiler\Event;
 use PhlyBlog\Compiler\SortedEntries;
 
 use function in_array;
-use function iterator_to_array;
 use function strtolower;
 
 class Archives extends AbstractList
@@ -30,7 +30,7 @@ class Archives extends AbstractList
 
     public function onCompileEnd(Event $e)
     {
-        $this->archives = iterator_to_array($this->archives);
+        $this->archives = ArrayUtils::iteratorToArray($this->archives ?? []);
     }
 
     public function compile()
