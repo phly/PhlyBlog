@@ -47,6 +47,7 @@ class PhpFileFilter extends FilterIterator
         }
 
         parent::__construct($iterator);
+        $this->rewind();
     }
 
     public function accept()

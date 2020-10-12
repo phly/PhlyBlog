@@ -38,7 +38,7 @@ class EntryEntity implements EntityDefinition
     protected $comments = array();
     protected $version = 2;
 
-    private $_errorMessages = array();
+    private $errorMessages = array();
 
     public static function makeStub($value)
     {
@@ -599,19 +599,19 @@ class EntryEntity implements EntityDefinition
         $filter->setData($this->toArray());
         $valid = $filter->isValid();
 
-        // If valid, push the filtered values back into the object
-        if ($valid) {
-            $this->fromArray($filter->getValues());
-        } else {
-            $this->_errorMessages = $filter->getMessages();
+        // If invalid, gather the error messages
+        if (! $valid) {
+            $this->errorMessages = $filter->getMessages();
+            return false;
         }
 
-        // Return validation result
-        return $valid;
+        // If valid, push the filtered values back into the object
+        $this->fromArray($filter->getValues());
+        return true;
     }
     
     public function getErrorMessages()
     {
-        return $this->_errorMessages;
+        return $this->errorMessages;
     }
 }

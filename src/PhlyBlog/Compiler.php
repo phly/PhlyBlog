@@ -63,14 +63,15 @@ class Compiler implements EventManagerAwareInterface
                 continue;
             }
 
-            if (!$entry->isValid()) {
-                // if we have an invalid entry, we should not continue
-                $exception = '';
-                foreach ($entry->getErrorMessages() as $errorMsg)
-                {
-                    $exception .= "--". array_values($errorMsg)[0]."\n";
-                }
-                throw new ConsoleException\RuntimeException('Not valid post file! '."\n".$exception);
+            if (! $entry->isValid()) {
+                // If we have an invalid entry, we should not continue
+                throw new ConsoleException\RuntimeException(sprintf(
+                    "Not valid post file: \n%s",
+                    implode("\n", array_map(function (array $errorMessages) {
+                        $message = array_shift($errorMessages);
+                        return '- ' . $message;
+                    }, $entry->getErrorMessages()))
+                ));
             }
 
             if ($entry->isDraft()) {
