@@ -12,6 +12,7 @@
     "homepage": "https://github.com/phly/PhlyBlog",
     "require": {
         "php": "^7.3",
+        "laminas/laminas-cli": "^0.1.4",
         "laminas/laminas-console": "^2.5",
         "laminas/laminas-dependency-plugin": "^1.0",
         "laminas/laminas-eventmanager": "^3.0",

@@ -8,6 +8,7 @@ use Laminas\View\Resolver;
 use Laminas\View\View;
 use PhlyBlog\Compiler;
 use PhlyBlog\CompilerOptions;
+use PhlyBlog\ConfigProvider;
 use PhlyBlogTest\Compiler\TestAsset\MockWriter;
 
 use function file_get_contents;
@@ -34,13 +35,13 @@ trait TestHelper
 
     private function injectScaffolds()
     {
-        $options = include __DIR__ . '/../../../config/module.config.php';
+        $configProvider = new ConfigProvider();
+        $options        = $configProvider();
+        $router         = TreeRouteStack::factory($options['router']);
+        $resolver       = new Resolver\TemplatePathStack();
+        $renderer       = new Renderer\PhpRenderer();
 
-        $router = TreeRouteStack::factory($options['router']);
-
-        $resolver = new Resolver\TemplatePathStack();
         $resolver->addPath(__DIR__ . '/../../../view');
-        $renderer = new Renderer\PhpRenderer();
         $renderer->setResolver($resolver);
         $renderer->plugin('url')->setRouter($router);
 
