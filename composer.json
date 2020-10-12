@@ -43,13 +43,16 @@
         }
     },
     "autoload": {
-        "psr-0": {
-            "PhlyBlog": "src/"
+        "psr-4": {
+            "PhlyBlog\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "PhlyBlogTest\\": "test/PhlyBlog/"
+            "PhlyBlogTest\\": "test/"
         }
+    },
+    "scripts": {
+        "test": "phpunit"
     }
 }

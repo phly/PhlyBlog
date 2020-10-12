@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1262909eb2eefa00841330a4f7dd371d",
+    "content-hash": "bf8db6a6490c5e6fa92a57ebbdd6e6f9",
     "packages": [
         {
             "name": "brick/varexporter",
@@ -1655,11 +1655,17 @@
         },
         {
             "name": "phly/phly-common",
-            "version": "dev-refresh",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/rieschl/PhlyCommon.git",
-                "reference": "b6c2bfebb8eb30cbd6b8a784e929cc5ee24aa382"
+                "url": "https://github.com/phly/PhlyCommon.git",
+                "reference": "a6e42a18613d996f5e53b95dee729e2309bf0253"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phly/PhlyCommon/zipball/a6e42a18613d996f5e53b95dee729e2309bf0253",
+                "reference": "a6e42a18613d996f5e53b95dee729e2309bf0253",
+                "shasum": ""
             },
             "require": {
                 "laminas/laminas-dependency-plugin": "^1.0",
@@ -1675,22 +1681,11 @@
             },
             "type": "library",
             "autoload": {
-                "psr-0": {
-                    "PhlyCommon": "src/"
-                }
-            },
-            "autoload-dev": {
                 "psr-4": {
-                    "PhlyCommonTest\\": "test/PhlyCommon/"
+                    "PhlyCommon\\": "src/"
                 }
             },
-            "authors": [
-                {
-                    "name": "Matthew Weier O'Phinney",
-                    "email": "matthew@weierophinney.net",
-                    "homepage": "http://mwop.net/"
-                }
-            ],
+            "notification-url": "https://packagist.org/downloads/",
             "description": "A set of interfaces and generic classes used across various Phly modules.",
             "homepage": "https://github.com/phly/PhlyCommon",
             "keywords": [
@@ -1699,7 +1694,7 @@
                 "zend",
                 "zf2"
             ],
-            "time": "2020-10-11T09:38:18+00:00"
+            "time": "2020-10-12T15:37:55+00:00"
         },
         {
             "name": "psr/container",
@@ -3714,9 +3709,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "phly/phly-common": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

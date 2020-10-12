@@ -34,12 +34,12 @@ trait TestHelper
 
     private function injectScaffolds()
     {
-        $options = include __DIR__ . '/../../../../config/module.config.php';
+        $options = include __DIR__ . '/../../../config/module.config.php';
 
         $router = TreeRouteStack::factory($options['router']);
 
         $resolver = new Resolver\TemplatePathStack();
-        $resolver->addPath(__DIR__ . '/../../../../view');
+        $resolver->addPath(__DIR__ . '/../../../view');
         $renderer = new Renderer\PhpRenderer();
         $renderer->setResolver($resolver);
         $renderer->plugin('url')->setRouter($router);
