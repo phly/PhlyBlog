@@ -105,14 +105,15 @@ class CompileCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io    = new SymfonyStyle($input, $output);
-        $flags = $this->getFlags($input);
-        $tags  = $this->getTags();
+        $io        = new SymfonyStyle($input, $output);
+        $flags     = $this->getFlags($input);
+        $tags      = $this->getTags();
+        $listeners = $this->getListeners($flags, $tags);
 
         // Compile blog entries
         $io->title('Compiling Blog');
-        $io->write('<info>Compiling and sorting entries...</info>');
-        $io->progressStart();
+        $io->writeln('<info>Compiling and sorting entries...</info>');
+        $io->progressStart(1);
         $this->compiler->compile();
         $io->progressFinish();
 
@@ -120,9 +121,9 @@ class CompileCommand extends Command
         $this->generateTagCloud($io, $tags);
 
         // Compile everything else
-        foreach ($this->getListeners($flags, $tags) as $type => $listener) {
-            $io->write(sprintf('<info>Compiling %s</info>', $type));
-            $io->progressStart();
+        foreach ($listeners as $type => $listener) {
+            $io->writeln(sprintf('<info>Compiling %s</info>', $type));
+            $io->progressStart(1);
             $listener->compile();
             $io->progressFinish();
         }
@@ -168,8 +169,8 @@ class CompileCommand extends Command
         }
 
         $tagCloudGenerator = $this->config['cloud_callback'];
-        $io->write('<info>Creating and rendering tag cloud</info>');
-        $io->progressStart();
+        $io->writeln('<info>Creating and rendering tag cloud</info>');
+        $io->progressStart(1);
         $tagCloudGenerator($tags->getTagCloud(), $this->config, $this->container);
         $io->progressFinish();
     }
