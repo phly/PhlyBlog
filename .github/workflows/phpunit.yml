@@ -36,13 +36,4 @@ jobs:
         run: "composer update --no-interaction --no-progress --no-suggest"
 
       - name: "Tests"
-        run: "vendor/bin/phpunit --coverage-clover=clover.xml --coverage-text"
-
-      - name: "Monitor coverage"
-        if: github.event_name == 'pull_request'
-        uses: slavcodev/coverage-monitor-action@1.2.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          clover_file: "clover.xml"
-          threshold_alert: 70
-          threshold_warning: 71
+        run: "vendor/bin/phpunit --coverage-text"
