@@ -22,4 +22,4 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- [#23](https://github.com/phly/PhlyBlog/pull/23) fixes an issue in the phly-blog:compile command with resolution of the Tags listener, which led to a fatal error.
