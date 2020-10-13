@@ -2,56 +2,52 @@
 
 namespace PhlyBlog\Console;
 
-use Laminas\Http\PhpEnvironment\Request;
-use Laminas\Http\PhpEnvironment\Response;
+use Laminas\Mvc\Application;
+use Laminas\Mvc\Service\ViewHelperManagerFactory;
 use Laminas\View\Model\ViewModel;
-use Laminas\View\Renderer\PhpRenderer;
+use Laminas\View\Renderer\RendererInterface;
 use Laminas\View\View;
+use Laminas\View\ViewEvent;
 use Psr\Container\ContainerInterface;
 
 class ViewFactory
 {
     public function __invoke(ContainerInterface $container): View
     {
-        $view     = new View();
-        $renderer = $this->createRenderer($container);
-
-        $view->setRequest(new Request());
-        $view->setResponse(new Response());
-        $view->addRenderingStrategy(
-            function () use ($renderer) {
-                return $renderer;
-            },
-            100
-        );
-
-        return $view;
-    }
-
-    private function createRenderer(ContainerInterface $container): PhpRenderer
-    {
-        $helpers  = $container->get('ViewHelperManager');
-        $renderer = new PhpRenderer();
-
-        $renderer->setHelperPluginManager($helpers);
-        $renderer->setResolver($container->get('ViewResolver'));
-
-        $config = $container->get('config');
-        $layout = $config['view_manager']['layout'] ?? 'layout/layout';
-        $model  = $this->getRootModel($container);
-        $model->setTemplate($layout);
-        $helpers->get('view_model')->setRoot($model);
-
-        return $renderer;
-    }
-
-    private function getRootModel(ContainerInterface $container): ViewModel
-    {
-        if (! $container->has('MvcEvent')) {
-            return new ViewModel();
+        // This part is necessary to ensure that the router and MvcEvent are
+        // populated for helpers such as the Url helper.
+        $application = $container->get('Application');
+        if ($application instanceof Application) {
+            $application->bootstrap();
         }
 
-        $event = $container->get('MvcEvent');
-        return $event->getViewModel();
+        // Prepare the initial view state
+        $view = $container->get(View::class);
+
+        /** @var RendererInterface $renderer */
+        $renderer = $container->get(RendererInterface::class);
+
+        // Reset the helper plugin manager on each iteration
+        $view->addRenderingStrategy(function () use ($container, $renderer) {
+            if (method_exists($renderer, 'setHelperPluginManager')) {
+                $renderer->setHelperPluginManager(
+                    (new ViewHelperManagerFactory())($container, 'ViewHelperManager')
+                );
+            }
+            return $renderer;
+        }, 100);
+
+        // Create the layout view model
+        $config = $container->get('config');
+        $layout = new ViewModel();
+        $layout->setTemplate($config['view_manager']['layout'] ?? 'layout/layout');
+
+        // Render content within the layout
+        $view->addResponseStrategy(function (ViewEvent $event) use ($renderer, $layout) {
+            $layout->setVariable('content', $event->getResult());
+            $event->setResult($renderer->render($layout));
+        }, 100);
+
+        return $view;
     }
 }
