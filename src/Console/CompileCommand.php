@@ -221,7 +221,7 @@ class CompileCommand extends Command
         }
 
         if ($flags['all'] || $flags['tag']) {
-            $listeners['entries by tag'] = $this->tags;
+            $listeners['entries by tag'] = $tags;
         }
 
         return $listeners;
