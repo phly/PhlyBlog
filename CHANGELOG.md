@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.1.0 - TBD
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 2.0.2 - 2020-10-13
 
 ### Fixed
@@ -10,14 +32,9 @@ All notable changes to this project will be documented in this file, in reverse 
 
 - [#26](https://github.com/phly/PhlyBlog/pull/26) fixes the remaining issues with rendering the blog posts using the `phly-blog:compile` tooling, ensuring that the view is capable of identifying a renderer, posts are rendered within the layout, and that no duplication of metadata occurs.
 
-
 -----
 
 ### Release Notes for [2.0.2](https://github.com/phly/PhlyBlog/milestone/5)
-
-
-
-### 2.0.2
 
 - Total issues resolved: **0**
 - Total pull requests resolved: **1**
@@ -33,14 +50,9 @@ All notable changes to this project will be documented in this file, in reverse 
 
 - [#23](https://github.com/phly/PhlyBlog/pull/23) fixes an issue in the phly-blog:compile command with resolution of the Tags listener, which led to a fatal error.
 
-
 -----
 
 ### Release Notes for [2.0.1](https://github.com/phly/PhlyBlog/milestone/2)
-
-
-
-### 2.0.1
 
 - Total issues resolved: **1**
 - Total pull requests resolved: **1**
