@@ -4,6 +4,8 @@ namespace PhlyBlog\Console;
 
 use Laminas\Http\PhpEnvironment\Request;
 use Laminas\Http\PhpEnvironment\Response;
+use Laminas\Router\Http\TreeRouteStack;
+use Laminas\View\Helper\Url;
 use Laminas\View\Model\ViewModel;
 use Laminas\View\Renderer\PhpRenderer;
 use Laminas\View\View;
@@ -13,9 +15,9 @@ class ViewFactory
 {
     public function __invoke(ContainerInterface $container): View
     {
-        $view     = new View();
         $renderer = $this->createRenderer($container);
-
+        $view     = new View();
+        $view->setEventManager($container->get('EventManager'));
         $view->setRequest(new Request());
         $view->setResponse(new Response());
         $view->addRenderingStrategy(
@@ -30,8 +32,11 @@ class ViewFactory
 
     private function createRenderer(ContainerInterface $container): PhpRenderer
     {
-        $helpers  = $container->get('ViewHelperManager');
-        $renderer = new PhpRenderer();
+        /** @var \Laminas\View\HelperPluginManager $helpers */
+        $helpers   = $container->get('ViewHelperManager');
+        $renderer  = new PhpRenderer();
+        $urlHelper = (new Url())->setRouter($container->get(TreeRouteStack::class));
+        $helpers->setService('url', $urlHelper);
 
         $renderer->setHelperPluginManager($helpers);
         $renderer->setResolver($container->get('ViewResolver'));

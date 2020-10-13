@@ -108,6 +108,7 @@ class CompileCommand extends Command
         $io    = new SymfonyStyle($input, $output);
         $flags = $this->getFlags($input);
         $tags  = $this->getTags();
+        $listeners = $this->getListeners($flags, $tags);
 
         // Compile blog entries
         $io->title('Compiling Blog');
@@ -120,7 +121,7 @@ class CompileCommand extends Command
         $this->generateTagCloud($io, $tags);
 
         // Compile everything else
-        foreach ($this->getListeners($flags, $tags) as $type => $listener) {
+        foreach ($listeners as $type => $listener) {
             $io->write(sprintf('<info>Compiling %s</info>', $type));
             $io->progressStart();
             $listener->compile();
