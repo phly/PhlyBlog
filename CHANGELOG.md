@@ -22,7 +22,9 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- [#26](https://github.com/phly/PhlyBlog/pull/26) fixes issues with display of progress bars, ensuring they display along with the label detailing what is being compiled.
+
+- [#26](https://github.com/phly/PhlyBlog/pull/26) fixes the remaining issues with rendering the blog posts using the `phly-blog:compile` tooling, ensuring that the view is capable of identifying a renderer, posts are rendered within the layout, and that no duplication of metadata occurs.
 
 ## 2.0.1 - 2020-10-13
 
