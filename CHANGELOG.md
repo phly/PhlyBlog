@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.1.0 - TBD
+## 2.1.0 - 2020-11-04
 
 ### Added
 
@@ -12,17 +12,22 @@ All notable changes to this project will be documented in this file, in reverse 
 
 - [#29](https://github.com/phly/PhlyBlog/pull/29) adds an optional `?Compiler $compiler = null` argument to the `CompileCommand` constructor. When provided, the command will use that `Compiler` instance. The `CompileCommandFactory` now pulls the `Compiler` service from the container and passes it for that argument.
 
-### Deprecated
 
-- Nothing.
+-----
 
-### Removed
+### Release Notes for [2.1.0](https://github.com/phly/PhlyBlog/milestone/3)
 
-- Nothing.
 
-### Fixed
 
-- Nothing.
+### 2.1.0
+
+- Total issues resolved: **1**
+- Total pull requests resolved: **1**
+- Total contributors: **2**
+
+#### enhancement
+
+ - [29: Add Compiler as a container service](https://github.com/phly/PhlyBlog/pull/29) thanks to @weierophinney and @vrkansagara
 
 ## 2.0.2 - 2020-10-13
 
