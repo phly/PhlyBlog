@@ -63,7 +63,8 @@ class CompileCommand extends Command
     public function __construct(
         array $config,
         ContainerInterface $container,
-        View $view
+        View $view,
+        ?Compiler $compiler = null
     ) {
         $this->config          = $config;
         $this->container       = $container;
@@ -71,12 +72,11 @@ class CompileCommand extends Command
         $this->compilerOptions = new CompilerOptions($config['options'] ?? []);
         $this->responseFile    = new ResponseFile();
         $this->writer          = new FileWriter();
-
-        new ResponseStrategy($this->writer, $this->responseFile, $view);
-
-        $this->compiler = new Compiler(
+        $this->compiler        = $compiler ?: new Compiler(
             new PhpFileFilter($config['posts_path'] ?? getcwd() . '/data/blog/')
         );
+
+        new ResponseStrategy($this->writer, $this->responseFile, $view);
 
         parent::__construct();
     }

@@ -2,6 +2,7 @@
 
 namespace PhlyBlog\Console;
 
+use PhlyBlog\Compiler;
 use Psr\Container\ContainerInterface;
 
 class CompileCommandFactory
@@ -14,7 +15,8 @@ class CompileCommandFactory
         return new CompileCommand(
             $config,
             $container,
-            $container->get(View::class)
+            $container->get(View::class),
+            $container->get(Compiler::class)
         );
     }
 }
