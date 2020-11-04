@@ -6,11 +6,11 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
-- Nothing.
+- [#29](https://github.com/phly/PhlyBlog/pull/29) adds a `PhlyBlog\CompilerFactory`, and wires the `PhlyBlog\Compiler` service to be created via that factory.
 
 ### Changed
 
-- Nothing.
+- [#29](https://github.com/phly/PhlyBlog/pull/29) adds an optional `?Compiler $compiler = null` argument to the `CompileCommand` constructor. When provided, the command will use that `Compiler` instance. The `CompileCommandFactory` now pulls the `Compiler` service from the container and passes it for that argument.
 
 ### Deprecated
 
