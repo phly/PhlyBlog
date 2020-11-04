@@ -209,6 +209,7 @@ class ConfigProvider
     {
         return [
             'factories' => [
+                Compiler::class               => CompilerFactory::class,
                 Console\CompileCommand::class => Console\CompileCommandFactory::class,
                 Console\View::class           => Console\ViewFactory::class,
             ],

@@ -34,20 +34,22 @@ class PhpFileFilter extends FilterIterator
     {
         if (is_string($dirOrIterator)) {
             if (! is_dir($dirOrIterator)) {
-                throw new InvalidArgumentException('Expected a valid directory name');
+                throw new InvalidArgumentException(sprintf(
+                    'Expected a valid directory name; received "%s"',
+                    $dirOrIterator
+                ));
             }
 
             $dirOrIterator = new RecursiveDirectoryIterator($dirOrIterator);
         }
+
         if (! $dirOrIterator instanceof DirectoryIterator) {
             throw new InvalidArgumentException('Expected a DirectoryIterator');
         }
 
-        if ($dirOrIterator instanceof RecursiveIterator) {
-            $iterator = new RecursiveIteratorIterator($dirOrIterator);
-        } else {
-            $iterator = $dirOrIterator;
-        }
+        $iterator = $dirOrIterator instanceof RecursiveIterator
+            ? new RecursiveIteratorIterator($dirOrIterator)
+            : $dirOrIterator;
 
         parent::__construct($iterator);
         $this->rewind();
