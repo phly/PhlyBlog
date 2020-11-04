@@ -33,7 +33,7 @@ jobs:
           restore-keys: "${{ runner.os }}-composer-"
 
       - name: "Install highest dependencies"
-        run: "composer update --no-interaction --no-progress --no-suggest"
+        run: "composer update --no-interaction --no-progress"
 
       - name: "Tests"
         run: "vendor/bin/phpunit --coverage-clover=clover.xml --coverage-text"
