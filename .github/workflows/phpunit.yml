@@ -21,7 +21,7 @@ jobs:
         with:
           coverage: "pcov"
           php-version: "7.3"
-          extensions: intl
+          extensions: intl-60.3
           ini-values: memory_limit=-1
 
       - name: "Cache dependencies"
