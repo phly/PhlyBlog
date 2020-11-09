@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
-- Nothing.
+- [#31](https://github.com/phly/PhlyBlog/pull/31) changes the `Compiler` to implement `EventsCapableInterface` instead of `EventManagerAwareInterface` (the latter is a superset of the former). Doing so ensures that any initializers for `EventManagerAwareInterface` do not trigger, which prevents double-injection of the `EventManager` instance, and thus prevents overwriting any listeners attached via delegator factories. The `setEventManager()` method is still defined.
 
 ### Deprecated
 
