@@ -3,8 +3,10 @@
 namespace PhlyBlogTest;
 
 use InvalidArgumentException;
-use Laminas\EventManager\EventManagerAwareInterface;
+use Laminas\EventManager\EventManagerInterface;
+use Laminas\EventManager\EventsCapableInterface;
 use PhlyBlog\CompilerFactory;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -18,6 +20,22 @@ class CompilerFactoryTest extends TestCase
         yield 'empty posts_path config' => [true, ['blog' => ['posts_path' => null]]];
     }
 
+    public function prepareContainerRetrievalExpectations(MockObject $container, array $expectations): void
+    {
+        $arguments = [];
+        $services  = [];
+        foreach ($expectations as $name => $service) {
+            $arguments[] = [$name];
+            $services[]  = $service;
+        }
+
+        $container
+            ->expects($this->exactly(count($expectations)))
+            ->method('get')
+            ->withConsecutive(...$arguments)
+            ->willReturnOnConsecutiveCalls(...$services);
+    }
+
     /**
      * @dataProvider defaultConfigurationProvider
      */
@@ -25,6 +43,8 @@ class CompilerFactoryTest extends TestCase
         bool $hasConfig,
         ?array $config
     ): void {
+        $containerServices = [];
+
         $container = $this->createMock(ContainerInterface::class);
         $container
             ->expects($this->once())
@@ -33,15 +53,12 @@ class CompilerFactoryTest extends TestCase
             ->willReturn($hasConfig);
 
         if ($hasConfig) {
-            $container
-                ->expects($this->once())
-                ->method('get')
-                ->with('config')
-                ->willReturn($config);
+            $containerServices['config'] = $config;
         }
 
         $factory  = new CompilerFactory();
 
+        $this->prepareContainerRetrievalExpectations($container, $containerServices);
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(getcwd() . '/data/blog');
         $factory($container);
@@ -56,18 +73,19 @@ class CompilerFactoryTest extends TestCase
             ->with('config')
             ->willReturn(true);
 
-        $container
-            ->expects($this->once())
-            ->method('get')
-            ->with('config')
-            ->willReturn([
+        $containerServices = [
+            'config' => [
                 'blog' => [
                     'posts_path' => __DIR__,
                 ],
-            ]);
+            ],
+            EventManagerInterface::class => $this->createMock(EventManagerInterface::class),
+        ];
+
+        $this->prepareContainerRetrievalExpectations($container, $containerServices);
 
         $factory  = new CompilerFactory();
 
-        $this->assertInstanceOf(EventManagerAwareInterface::class, $factory($container));
+        $this->assertInstanceOf(EventsCapableInterface::class, $factory($container));
     }
 }

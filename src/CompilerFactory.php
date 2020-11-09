@@ -2,6 +2,7 @@
 
 namespace PhlyBlog;
 
+use Laminas\EventManager\EventManagerInterface;
 use PhlyBlog\Compiler\PhpFileFilter;
 use Psr\Container\ContainerInterface;
 
@@ -13,7 +14,8 @@ class CompilerFactory
         $config = $config['blog'] ?? [];
 
         return new Compiler(
-            new PhpFileFilter($config['posts_path'] ?? getcwd() . '/data/blog/')
+            new PhpFileFilter($config['posts_path'] ?? getcwd() . '/data/blog/'),
+            $container->get(EventManagerInterface::class)
         );
     }
 }

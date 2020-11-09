@@ -5,18 +5,22 @@ namespace PhlyBlog;
 use DateTime;
 use DateTimeZone;
 use Laminas\EventManager\EventManager;
-use Laminas\EventManager\EventManagerAwareInterface;
 use Laminas\EventManager\EventManagerInterface;
+use Laminas\EventManager\EventsCapableInterface;
 use RuntimeException;
 
-class Compiler implements EventManagerAwareInterface
+class Compiler implements EventsCapableInterface
 {
     protected $events;
     protected $files;
 
-    public function __construct(Compiler\PhpFileFilter $files)
+    public function __construct(Compiler\PhpFileFilter $files, ?EventManagerInterface $eventManager = null)
     {
         $this->files = $files;
+
+        if ($eventManager) {
+            $this->setEventManager($eventManager);
+        }
     }
 
     public function setEventManager(EventManagerInterface $events)
