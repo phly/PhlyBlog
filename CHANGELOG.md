@@ -2,27 +2,28 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.1.1 - TBD
-
-### Added
-
-- Nothing.
+## 2.1.1 - 2020-11-09
 
 ### Changed
 
 - [#31](https://github.com/phly/PhlyBlog/pull/31) changes the `Compiler` to implement `EventsCapableInterface` instead of `EventManagerAwareInterface` (the latter is a superset of the former). Doing so ensures that any initializers for `EventManagerAwareInterface` do not trigger, which prevents double-injection of the `EventManager` instance, and thus prevents overwriting any listeners attached via delegator factories. The `setEventManager()` method is still defined.
 
-### Deprecated
 
-- Nothing.
+-----
 
-### Removed
+### Release Notes for [2.1.1](https://github.com/phly/PhlyBlog/milestone/7)
 
-- Nothing.
+2.1.x bugfix release (patch)
 
-### Fixed
+### 2.1.1
 
-- Nothing.
+- Total issues resolved: **1**
+- Total pull requests resolved: **1**
+- Total contributors: **2**
+
+#### bug
+
+ - [31: Make Compiler EventsCapable instead of EventManagerAware](https://github.com/phly/PhlyBlog/pull/31) thanks to @weierophinney and @vrkansagara
 
 ## 2.1.0 - 2020-11-04
 
