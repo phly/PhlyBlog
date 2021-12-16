@@ -1,32 +1,60 @@
 {
     "name": "phly/phly-blog",
-    "description": "ZF2 Module implementing a static blog generator",
     "type": "library",
+    "description": "Laminas Module implementing a static blog generator",
     "keywords": [
+        "laminas",
         "zf2",
         "zend",
         "module",
         "blog"
     ],
-    "homepage": "https://github.com/weierophinney/PhlyBlog",
-    "authors": [
-        {
-            "name": "Matthew Weier O'Phinney",
-            "email": "matthew@weierophinney.net",
-            "homepage": "http://mwop.net/"
-        }
-    ],
+    "homepage": "https://github.com/phly/PhlyBlog",
     "require": {
-        "php": ">=5.3.3",
-        "zendframework/zendframework": "2.*",
-        "phly/phly-common": "dev-master"
+        "php": "^7.3",
+        "laminas/laminas-cli": "^0.1.4",
+        "laminas/laminas-console": "^2.5",
+        "laminas/laminas-dependency-plugin": "^1.0 || ^2.0",
+        "laminas/laminas-eventmanager": "^3.0",
+        "laminas/laminas-feed": "^2.5",
+        "laminas/laminas-filter": "^2.5",
+        "laminas/laminas-http": "^2.5",
+        "laminas/laminas-i18n": "^2.5",
+        "laminas/laminas-inputfilter": "^2.5",
+        "laminas/laminas-modulemanager": "^2.5",
+        "laminas/laminas-mvc": "^3.0",
+        "laminas/laminas-paginator": "^2.5",
+        "laminas/laminas-stdlib": "^3.0",
+        "laminas/laminas-tag": "^2.5",
+        "laminas/laminas-uri": "^2.5",
+        "laminas/laminas-validator": "^2.5",
+        "laminas/laminas-view": "^2.5",
+        "phly/phly-common": "^2.0.1",
+        "symfony/console": "^5.1"
+    },
+    "require-dev": {
+        "ext-json": "*",
+        "phpunit/phpunit": "^9.4"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laminas": {
+            "module": "PhlyBlog"
+        }
     },
     "autoload": {
-        "psr-0": {
-            "PhlyBlog": "src/"
-        },
-        "classmap": [
-            "./"
-        ]
+        "psr-4": {
+            "PhlyBlog\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PhlyBlogTest\\": "test/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
     }
 }
