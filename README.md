@@ -1,5 +1,9 @@
 # PhlyBlog: Static Blog Generator
 
+> :warning: **Archived 2025-08-17**
+> 
+> Use at your own risk.
+
 This module is a tool for generating a static blog.
 
 Blog posts are simply PHP files that create and return `PhlyBlog\EntryEntity` objects.
